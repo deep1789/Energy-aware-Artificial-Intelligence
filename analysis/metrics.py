@@ -8,7 +8,13 @@ def curve(res, key="acc", exit_idx=-1):
     """(energy_fraction, accuracy) arrays with the origin at chance level omitted."""
     log = res["log"]
     x = np.array(log["cum_energy"]) / res["fleet_capacity"]
-    y = np.array([a[exit_idx] for a in log[key]])
+    if exit_idx == "best":      # exit chosen by validation accuracy at each evaluation point
+        va = np.array(log["val_acc"])
+        y = np.array([a[int(np.argmax(v))] for a, v in zip(log[key if key != "val_acc" else "acc"], va)])
+        if key == "val_acc":
+            y = va.max(axis=1)
+    else:
+        y = np.array([a[exit_idx] for a in log[key]])
     return x, y
 
 
@@ -37,7 +43,8 @@ def energy_to_target(res, target, key="acc", exit_idx=-1, smooth=3):
 
 
 def final_acc(res, key="acc", exit_idx=-1, last=3):
-    return float(np.mean([a[exit_idx] for a in res["log"][key][-last:]]))
+    _, y = curve(res, key, exit_idx)
+    return float(np.mean(y[-last:]))
 
 
 def jain(v):

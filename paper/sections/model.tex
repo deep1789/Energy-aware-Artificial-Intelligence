@@ -1,0 +1,84 @@
+\section{System model and problem formulation}\label{sec:model}
+
+This section fixes the learning model, the energy model, the battery dynamics and the lifecycle accounting used throughout the paper. Table~\ref{tab:notation} lists the notation.
+
+\begin{table}[t]
+\centering\small
+\caption{Notation.}\label{tab:notation}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning\\
+\midrule
+$N,\;T,\;m$ & clients, communication rounds, clients selected per round\\
+$L$ & number of blocks (and exits) of the multi-exit network\\
+$\mathbf w=(\mathbf w_1,\dots,\mathbf w_L)$ & parameters; block $l$ includes the head of exit $l$\\
+$c=(d,b,\tau)$ & configuration: depth, upload bit-width, local epochs\\
+$f_k^{j}$ & loss of client $k$ at exit $j$; $\lambda_j$ exit weights\\
+$p_k=n_k/\sum_i n_i$ & data share of client $k$\\
+$e_k(c)$ & energy of one participation of client $k$ with configuration $c$ (J)\\
+$\bar E_k,\;B_k^t$ & per-round energy budget and battery state of client $k$ (J)\\
+$\phi$ & budget tightness; fleet capacity $\mathcal C=\sum_k \bar E_k T$\\
+$q_k^t,\;Z_j^t$ & energy queue of client $k$; coverage queue of exit $j$\\
+$V,\;\lambda,\;\rho^{\min}$ & utility weight, shadow energy price, target coverage\\
+$\sigma_j$ & probability that a selected client trains block $j$ (coverage)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Federated multi-exit learning}
+The global model is a multi-exit network with $L$ blocks. Exit $j\in\{1,\dots,L\}$ is a classifier attached after block $j$, so its output depends on blocks $1,\dots,j$ only. Client $k$ owns a local data distribution $\mathcal D_k$ and the loss of exit $j$ is $f_k^{j}(\mathbf w)=\mathbb E_{(x,y)\sim\mathcal D_k}\,\ell\big(h_j(\phi_{1:j}(x;\mathbf w)),y\big)$. The global objective is
+\begin{equation}\label{eq:objective}
+F(\mathbf w)=\sum_{k=1}^{N}p_k\sum_{j=1}^{L}\lambda_j f_k^{j}(\mathbf w),\qquad \lambda_j>0,\;\sum_j\lambda_j=1 .
+\end{equation}
+A participating client chooses a configuration $c=(d,b,\tau)$. It downloads blocks $1,\dots,d$, runs $\tau$ local epochs on the truncated objective $F_k^{(d)}=\sum_{j\le d}\lambda_j f_k^{j}$, quantises its update to $b$ bits with an unbiased stochastic quantiser and uploads the update of blocks $1,\dots,d$. Because $\partial f_k^{j}/\partial\mathbf w_l=0$ for $l>j$, the gradient of $F_k^{(d)}$ with respect to block $l$ is $\sum_{j=l}^{d}\lambda_j\nabla_l f_k^{j}$ and vanishes when $d<l$. The server aggregates every block separately over the clients that trained it (Section~\ref{sec:method}). A client of depth $d$ therefore contributes to the shallow blocks fully, but it \emph{withholds} the gradient contribution of exits $j>d$ to every block. This is the source of the coverage bias analysed in Section~\ref{sec:theory}.
+
+\subsection{Energy model}\label{sec:energymodel}
+The energy of one participation of client $k$ on device class $u(k)$ is
+\begin{equation}\label{eq:ecomp}
+e_k(c)=\underbrace{\tau\,n_k\Big[\alpha_u\,3\,\mathrm{MAC}_{1:d}+\beta_u\,\mathrm{Mem}_{1:d}\Big]}_{\text{local training}}
++\underbrace{\varepsilon^{\mathrm{tx}}_u\,b\,P_{1:d}+\varepsilon^{\mathrm{rx}}_u\,32\,P_{1:d}}_{\text{communication}} ,
+\end{equation}
+where $\mathrm{MAC}_{1:d}$ is the number of multiply--accumulates of one forward pass through blocks $1,\dots,d$ (the factor 3 accounts for the backward pass), $\mathrm{Mem}_{1:d}$ is the number of bytes moved per sample (activations and weights, forward and backward), $P_{1:d}$ is the number of parameters in blocks $1,\dots,d$, $\alpha_u$ is the energy per MAC, $\beta_u$ the energy per byte of memory traffic and $\varepsilon_u^{\mathrm{tx}},\varepsilon_u^{\mathrm{rx}}$ the radio energy per transmitted and received bit. The term $\beta_u\mathrm{Mem}$ separates data movement from arithmetic, which matters because many edge workloads are memory-bound. The cost of one inference that exits at block $j$ is $e^{\mathrm{inf}}_u(j)=\alpha_u\mathrm{MAC}_{1:j}+\beta_u\,\mathrm{Mem}^{\mathrm{inf}}_{1:j}$.
+
+\paragraph{Device classes and an important caveat.}
+We use three device classes whose constants follow the orders of magnitude of published figures for Raspberry-Pi-class, Jetson-Nano-class and Jetson-Orin-class boards (Table~\ref{tab:devices}). \emph{These constants are modelling assumptions, not measurements}: no power meter was available for this study, so every energy number in this paper is model-based. We therefore (i) report results over a sweep of radio-energy scales, (ii) stress the controllers with multiplicative errors between the constants assumed by the controller and the constants that actually drain the battery (Section~\ref{sec:sens}), and (iii) check that the relative cost of depth predicted by the model matches the relative wall-clock cost on a real CPU (Section~\ref{sec:latency}). Replacing Table~\ref{tab:devices} by constants fitted on hardware requires no change to any algorithm in this paper.
+
+\begin{table}[t]
+\centering\small
+\caption{Assumed device classes (fleet mix 40/40/20\%). Energy per MAC $\alpha$, per byte $\beta$, radio energy per bit, and relative battery size $s_u$.}\label{tab:devices}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Class & $\alpha$ (nJ/MAC) & $\beta$ (nJ/B) & $\varepsilon^{\mathrm{tx}}$ (nJ/bit) & $\varepsilon^{\mathrm{rx}}$ (nJ/bit) & $s_u$\\
+\midrule
+weak (Pi-class, Wi-Fi) & 2.0 & 0.5 & 50 & 25 & 0.5\\
+mid (Nano-class, Wi-Fi) & 0.7 & 0.3 & 50 & 25 & 1.0\\
+strong (Orin-class, LTE) & 0.2 & 0.15 & 200 & 100 & 2.0\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Batteries and budgets}
+Let $\bar e=\frac{m}{N}\,e^{\mathrm{mid}}(L,32,\tau_{\max};\bar n)$ be the average per-round energy of a fleet that selects $m$ of $N$ clients and runs the full configuration on a mid-class device. Client $k$ receives a per-round budget $\bar E_k=\phi\,\bar e\,s_{u(k)}$ and an initial battery $B_k^0=\bar E_k T$, so the \emph{fleet capacity} is $\mathcal C=\sum_k\bar E_kT$. The parameter $\phi$ is the budget tightness: $\phi=1$ would let every client run the full configuration at the nominal selection rate for the whole horizon, whereas $\phi=0.1$ leaves roughly one tenth of that energy. A participation is feasible only if $B_k^t\ge e_k(c)$, and
+\begin{equation}\label{eq:battery}
+B_k^{t+1}=B_k^t-e_k(c_k^t)\,\mathbb 1[k\in\mathcal S_t],\qquad B_k^t\ge 0 .
+\end{equation}
+In addition each client has a long-term budget
+$\limsup_{T\to\infty}\frac1T\sum_{t<T}\mathbb E\,[e_k(c_k^t)\mathbb 1[k\in\mathcal S_t]]\le\bar E_k$.
+
+\subsection{Lifecycle energy}\label{sec:lifecycle-model}
+After training, the model is deployed with a confidence-gated cascade: a sample exits at the first exit $j$ whose maximum softmax probability is at least $\theta$ (the last exit is forced). With $\pi_j(\theta)$ the probability of exiting at $j$ the expected inference energy is $\bar e^{\mathrm{inf}}(\theta)=\sum_j\pi_j(\theta)\,e^{\mathrm{inf}}(j)$, and the lifecycle energy of serving $M$ inferences is
+\begin{equation}\label{eq:lifecycle}
+E_{\mathrm{life}}(M)=E_{\mathrm{train}}+M\,\bar e^{\mathrm{inf}}(\theta).
+\end{equation}
+For two models $A$ and $B$ with $\bar e^{\mathrm{inf}}_B>\bar e^{\mathrm{inf}}_A$ the \emph{break-even number of inferences} after which $A$ is cheaper over its lifecycle is
+\begin{equation}\label{eq:breakeven}
+M^\star=\frac{E^{A}_{\mathrm{train}}-E^{B}_{\mathrm{train}}}{\bar e^{\mathrm{inf},B}-\bar e^{\mathrm{inf},A}},
+\end{equation}
+which is non-positive (A is cheaper from the first inference) whenever A also trains at lower cost. The \emph{training--inference crossover} $M_\times=E_{\mathrm{train}}/\bar e^{\mathrm{inf}}$ is the number of inferences after which serving costs more energy than training did.
+
+\subsection{Problem statement}
+Given the fleet, the horizon $T$ and the budgets, choose in every round the selected set $\mathcal S_t$ ($|\mathcal S_t|\le m$) and the configurations $c_k^t$ to maximise the accuracy of the final model for the energy actually consumed,
+\begin{equation}\label{eq:P1}
+\max_{\{\mathcal S_t,c_k^t\}}\ \ \mathrm{Acc}\big(\mathbf w^{T}\big)\quad\text{s.t. \eqref{eq:battery},}\ \ \tfrac1T\textstyle\sum_t\mathbb E[e_k^t]\le\bar E_k\ \ \forall k,\ \ \sigma_j\ge\rho^{\min}_j\ \ \forall j .
+\end{equation}
+The last constraint requires that every block keeps being trained with at least a target probability; Section~\ref{sec:theory} shows why it is necessary. Problem~\eqref{eq:P1} is a mixed-integer programme coupled over time through the batteries and through the learning dynamics, so we solve it online with a Lyapunov controller. Besides the final accuracy we report accuracy at fixed fractions of the fleet capacity and the energy needed to reach a target accuracy, because a method that stops early must not be penalised for the energy it did not spend.

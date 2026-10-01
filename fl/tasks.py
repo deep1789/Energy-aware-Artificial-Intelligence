@@ -28,7 +28,7 @@ def build_task(name: str, fold: int = 0, root: str = "data") -> Task:
     if name == "uci_har":
         train, test = uci_har.load_uci_har(root)
         subj = np.unique(train.subjects)
-        val_ids = [int(subj[i]) for i in (2, 9, 16)]
+        val_ids = [int(subj[i]) for i in (1, 5, 9, 13, 17)]
         train, test = uci_har.standardize(train, test)
         val = train.subset(np.isin(train.subjects, val_ids))
         tr = train.subset(~np.isin(train.subjects, val_ids))

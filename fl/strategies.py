@@ -26,7 +26,10 @@ class Base:
     def feasible(self, k, c):
         return self.fleet.battery[k] - self.e(k, c) >= 0
 
-    def observe(self, *a): pass
+    def observe(self, cid, d, bits, tau, e, loss):
+        self.measured = getattr(self, "measured", {})
+        self.measured[cid] = e
+
     def end_round(self, *a): pass
 
     def stat_util(self, k):
@@ -53,6 +56,12 @@ class FedProx(FedAvg):
     prox_mu = 0.01
 
     def __init__(self, mu=0.01): self.prox_mu = mu
+
+
+class FedAvgSingleExit(FedAvg):
+    """FedAvg with a conventional single-exit objective (loss on the last exit only)."""
+    name = "fedavg_single"
+    final_only = True
 
 
 class QSGD8(FedAvg):
@@ -136,11 +145,11 @@ class EcoFed(Base):
     name = "ecofed"
 
     def __init__(self, V=2.0, rho_min=0.5, use_energy_q=True, use_cov_q=True,
-                 depths=None, bits=BITS, taus=TAUS, tag=None, kappa=1.0, gamma_pow=1.0):
+                 depths=None, bits=BITS, taus=TAUS, tag=None, kappa=1.0, gamma_pow=1.0, q_floor=0.0):
         self.V, self.rho_min = V, rho_min
         self.use_energy_q, self.use_cov_q = use_energy_q, use_cov_q
         self.depths_opt, self.bits_opt, self.taus_opt = depths, bits, taus
-        self.kappa, self.gamma_pow = kappa, gamma_pow
+        self.kappa, self.gamma_pow, self.q_floor = kappa, gamma_pow, q_floor
         if tag:
             self.name = tag
 
@@ -170,7 +179,7 @@ class EcoFed(Base):
                     continue
                 s = self.V * self.utility_cfg(c, us[k] / mean_u)
                 if self.use_energy_q:
-                    s -= self.q[k] * e / fleet.budget[k]
+                    s -= (self.q[k] + self.q_floor) * e / fleet.budget[k]
                 if self.use_cov_q:
                     s += self.Z[:c[0]].sum() / self.m
                 if s > best_s:
@@ -181,12 +190,11 @@ class EcoFed(Base):
         return [(int(k), c) for _, k, c in cands[:self.m]]
 
     def end_round(self, t, fleet, picks, updates, rho):
-        sel = {k: c for k, c in picks}
+        measured = getattr(self, "measured", {})
         for k in fleet.ids:
-            e = self.e_tab[k][sel[k]] if (k in sel and fleet.battery[k] >= 0) else 0.0
-            took = k in sel
-            e_real = e if took else 0.0
+            e_real = measured.get(k, 0.0)          # energy reported by the device this round (0 if idle)
             self.q[k] = max(self.q[k] + e_real / fleet.budget[k] - 1.0, 0.0)
+        self.measured = {}
         self.Z = np.maximum(self.Z + self.target - rho, 0.0) if updates else self.Z + self.target * 0.0
         self.Z[0] = 0.0
 
@@ -205,7 +213,7 @@ class ForcedDepth(FedAvg):
 
 def registry(name: str, **kw):
     table = {
-        "fedavg": FedAvg, "fedprox": FedProx, "fedavg_q8": QSGD8, "fedavg_paced": Paced,
+        "fedavg": FedAvg, "fedavg_single": FedAvgSingleExit, "fedprox": FedProx, "fedavg_q8": QSGD8, "fedavg_paced": Paced,
         "static_depth": StaticDepth, "oort": Oort, "energy_greedy": EnergyGreedy,
         "forced_depth": ForcedDepth, "ecofed": EcoFed,
         "ecofed_noQ": lambda **k: EcoFed(use_energy_q=False, tag="ecofed_noQ", **k),

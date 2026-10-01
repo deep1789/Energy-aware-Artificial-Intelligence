@@ -33,7 +33,7 @@ def stochastic_quantize(t: torch.Tensor, bits: int, gen: torch.Generator) -> tor
 
 
 def local_train(model: MultiExitCNN1D, gstate: dict, data, depth: int, tau: int, bits: int,
-                lr: float, bs: int, gen: torch.Generator, prox_mu: float = 0.0):
+                lr: float, bs: int, gen: torch.Generator, prox_mu: float = 0.0, final_only: bool = False):
     """Train blocks/heads 1..depth for tau epochs; return (delta over those blocks, mean loss)."""
     model.load_state_dict(gstate)
     model.train()
@@ -52,7 +52,7 @@ def local_train(model: MultiExitCNN1D, gstate: dict, data, depth: int, tau: int,
                 continue
             opt.zero_grad()
             logits = model(X[idx], depth)
-            loss = multi_exit_loss(logits, y[idx])
+            loss = F.cross_entropy(logits[-1], y[idx]) if final_only else multi_exit_loss(logits, y[idx])
             if ep == 0:
                 first_epoch_loss += loss.item() * len(idx); cnt += len(idx)
             if gref is not None:
@@ -149,8 +149,10 @@ class RunCfg:
     lr: float = 0.05
     bs: int = 32
     eval_every: int = 4
+    dense_until: int = 24      # evaluate every round early on, when energy is spent fastest
     tau_max: int = 2
     radio_scale: float = 1.0
+    energy_err: float = 0.0     # sigma of lognormal error between true and nominal device constants
     seed: int = 0
 
 
@@ -162,9 +164,16 @@ def run_fl(task: Task, strategy, cfg: RunCfg, record_final: bool = True):
     em = EnergyModel(model.block_stats(), task.in_ch, task.in_len)
     fleet = make_fleet(task, em, cfg.m, cfg.phi, cfg.T, cfg.seed, cfg.tau_max)
     gstate = copy.deepcopy(model.state_dict())
+    err_rng = np.random.default_rng(5000 + cfg.seed)
+    true_dev = {}
+    for i in fleet.ids:
+        f = np.exp(err_rng.normal(0.0, cfg.energy_err, size=2)) if cfg.energy_err > 0 else (1.0, 1.0)
+        d0 = fleet.dev[i]
+        true_dev[i] = type(d0)(d0.name, d0.alpha * f[0], d0.beta * f[1], d0.tx_j_per_bit, d0.rx_j_per_bit,
+                               d0.battery_scale)
     strategy.setup(task, em, fleet, cfg, rng)
     L = model.n_exits
-    log = dict(round=[], cum_energy=[], acc=[], val_acc=[], alive=[], participants=[], rho=[], depth_mean=[])
+    log = dict(round=[], cum_energy=[], acc=[], val_acc=[], depleted=[], alive=[], participants=[], rho=[], depth_mean=[])
     cum_energy, t0 = 0.0, time.time()
     rho_hist = []
     for t in range(cfg.T):
@@ -172,11 +181,12 @@ def run_fl(task: Task, strategy, cfg: RunCfg, record_final: bool = True):
         updates, rho_num, rho_den = [], np.zeros(L), 0.0
         round_e = 0.0
         for cid, (d, bits, tau) in picks:
-            e = em.e_round(fleet.dev[cid], d, bits, tau, fleet.n[cid], cfg.radio_scale)
+            e = em.e_round(true_dev[cid], d, bits, tau, fleet.n[cid], cfg.radio_scale)   # true (measured) energy
             if fleet.battery[cid] - e < 0:
                 continue                                           # infeasible: client drops
             delta, loss = local_train(model, gstate, task.clients[cid], d, tau, bits, cfg.lr,
-                                      cfg.bs, gen, getattr(strategy, "prox_mu", 0.0))
+                                      cfg.bs, gen, getattr(strategy, "prox_mu", 0.0),
+                                      getattr(strategy, "final_only", False))
             fleet.battery[cid] -= e; fleet.cum_e[cid] += e; round_e += e
             fleet.last_loss[cid] = loss
             updates.append((fleet.n[cid], d, delta))
@@ -188,7 +198,7 @@ def run_fl(task: Task, strategy, cfg: RunCfg, record_final: bool = True):
         rho = rho_num / rho_den if rho_den > 0 else np.zeros(L)
         strategy.end_round(t, fleet, picks, updates, rho)
         rho_hist.append(rho)
-        if (t + 1) % cfg.eval_every == 0 or t == cfg.T - 1:
+        if t < cfg.dense_until or (t + 1) % cfg.eval_every == 0 or t == cfg.T - 1:
             P = predict_probs(model, gstate, task.test[0])
             acc = (P.argmax(-1) == task.test[1][:, None]).float().mean(0).tolist()
             alive = sum(fleet.battery[i] >= 0.1 * fleet.budget[i] for i in fleet.ids)
@@ -196,6 +206,7 @@ def run_fl(task: Task, strategy, cfg: RunCfg, record_final: bool = True):
             log["val_acc"].append((Pv.argmax(-1) == task.val[1][:, None]).float().mean(0).tolist())
             log["round"].append(t + 1); log["cum_energy"].append(cum_energy)
             log["acc"].append(acc); log["alive"].append(int(alive))
+            log["depleted"].append(int(sum(fleet.battery[i] < 0.02 * fleet.budget[i] * cfg.T for i in fleet.ids)))
             log["participants"].append(len(updates))
             log["rho"].append(np.mean(rho_hist[-cfg.eval_every:], axis=0).tolist())
             log["depth_mean"].append(float(np.mean([d for _, d, _ in updates])) if updates else 0.0)
