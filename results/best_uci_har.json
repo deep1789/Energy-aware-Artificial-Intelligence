@@ -1,0 +1,20 @@
+{
+ "ecofed": {
+  "V": 2.0,
+  "rho_min": 0.6
+ },
+ "energy_greedy": {
+  "eps": 0.3
+ },
+ "fedavg": {},
+ "fedavg_paced": {},
+ "fedavg_q8": {},
+ "fedprox": {
+  "mu": 0.01
+ },
+ "oort": {
+  "eps": 0.3,
+  "xi": 1.0
+ },
+ "static_depth": {}
+}

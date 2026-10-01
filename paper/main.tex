@@ -1,0 +1,42 @@
+\documentclass[preprint,12pt,authoryear]{elsarticle}
+\usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,algorithm,algpseudocode,enumitem,microtype,xcolor,array,siunitx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{natbib}
+\bibliographystyle{elsarticle-harv}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\graphicspath{{figures/}}
+\journal{Sustainable Computing: Informatics and Systems}
+
+\begin{document}
+\begin{frontmatter}
+\title{EcoFed: Coverage-Constrained, Energy-Priced Federated Multi-Exit Learning for Battery-Limited Edge Fleets}
+\author[a]{Author One\corref{cor1}}
+\ead{corresponding.author@example.org}
+\author[a]{Author Two}
+\cortext[cor1]{Corresponding author}
+\affiliation[a]{organization={Affiliation placeholder}, country={Country}}
+\input{sections/abstract}
+\end{frontmatter}
+
+\input{sections/intro}
+\input{sections/related}
+\input{sections/model}
+\input{sections/method}
+\input{sections/setup}
+\input{sections/results}
+\input{sections/discussion}
+
+\section*{Declarations}
+\textbf{Data and code availability.} Both datasets are public (UCI HAR and PAMAP2, UCI Machine Learning Repository). All code, configurations, tuned hyper-parameters and raw result logs are in the accompanying repository.\\
+\textbf{Use of generative AI.} A generative AI assistant was used to write and run the experiment code and to draft and edit the text; the authors are responsible for verifying every claim, number and reference.\\
+\textbf{Competing interests.} None declared. \textbf{Funding.} None declared.
+
+\bibliography{refs}
+
+\appendix
+\input{sections/appendix_proof}
+\input{sections/appendix_extra}
+\end{document}

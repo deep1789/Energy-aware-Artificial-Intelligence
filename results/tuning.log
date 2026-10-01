@@ -1,0 +1,32 @@
+uci_har phi=0.1 fedavg          auc=0.8150 lr=0.12 {}
+uci_har phi=0.1 fedavg_q8       auc=0.8209 lr=0.12 {}
+uci_har phi=0.1 fedavg_paced    auc=0.8217 lr=0.12 {}
+uci_har phi=0.1 fedprox         auc=0.8103 lr=0.12 {'mu': 0.1}
+uci_har phi=0.1 static_depth    auc=0.8415 lr=0.12 {}
+uci_har phi=0.1 oort            auc=0.8360 lr=0.12 {'eps': 0.1, 'xi': 1.0}
+uci_har phi=0.1 energy_greedy   auc=0.8347 lr=0.06 {'eps': 0.1}
+uci_har phi=0.1 ecofed          auc=0.8542 lr=0.12 {'V': 2.0, 'gamma_pow': 0.5, 'q_floor': 0.1, 'rho_min': 0.6}
+uci_har phi=0.25 fedavg          auc=0.8433 lr=0.12 {}
+uci_har phi=0.25 fedavg_q8       auc=0.8515 lr=0.12 {}
+uci_har phi=0.25 fedavg_paced    auc=0.8526 lr=0.12 {}
+uci_har phi=0.25 static_depth    auc=0.8802 lr=0.12 {}
+uci_har phi=0.25 fedprox         auc=0.8444 lr=0.06 {'mu': 0.01}
+uci_har phi=0.25 oort            auc=0.8689 lr=0.12 {'eps': 0.1, 'xi': 2.0}
+uci_har phi=0.25 energy_greedy   auc=0.8764 lr=0.12 {'eps': 0.1}
+uci_har phi=0.25 ecofed          auc=0.8941 lr=0.12 {'V': 2.0, 'gamma_pow': 0.5, 'q_floor': 0.3, 'rho_min': 0.3}
+pamap2 phi=0.1 fedavg          auc=0.3811 lr=0.12 {}
+pamap2 phi=0.1 fedavg_q8       auc=0.3766 lr=0.12 {}
+pamap2 phi=0.1 fedavg_paced    auc=0.3952 lr=0.06 {}
+pamap2 phi=0.1 static_depth    auc=0.4551 lr=0.06 {}
+pamap2 phi=0.1 fedprox         auc=0.3554 lr=0.12 {'mu': 0.001}
+pamap2 phi=0.1 oort            auc=0.3905 lr=0.12 {'eps': 0.1, 'xi': 1.0}
+pamap2 phi=0.1 energy_greedy   auc=0.3778 lr=0.12 {'eps': 0.1}
+pamap2 phi=0.1 ecofed          auc=0.4903 lr=0.06 {'V': 2.0, 'gamma_pow': 0.5, 'q_floor': 0.3, 'rho_min': 0.6}
+pamap2 phi=0.25 fedavg          auc=0.4531 lr=0.12 {}
+pamap2 phi=0.25 fedavg_q8       auc=0.4434 lr=0.12 {}
+pamap2 phi=0.25 fedavg_paced    auc=0.4597 lr=0.06 {}
+pamap2 phi=0.25 static_depth    auc=0.4720 lr=0.12 {}
+pamap2 phi=0.25 fedprox         auc=0.4487 lr=0.12 {'mu': 0.01}
+pamap2 phi=0.25 oort            auc=0.4390 lr=0.06 {'eps': 0.1, 'xi': 1.0}
+pamap2 phi=0.25 energy_greedy   auc=0.4526 lr=0.06 {'eps': 0.1}
+pamap2 phi=0.25 ecofed          auc=0.5496 lr=0.06 {'V': 2.0, 'gamma_pow': 0.5, 'q_floor': 0.1, 'rho_min': 0.6}

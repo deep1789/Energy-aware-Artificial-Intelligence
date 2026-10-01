@@ -5,7 +5,7 @@ from experiments.common import run_all
 BASE_METHODS = ["fedavg", "fedprox", "fedavg_q8", "fedavg_paced", "static_depth", "oort",
                 "energy_greedy", "ecofed"]
 ABLATIONS = ["ecofed_noQ", "ecofed_noZ", "ecofed_fixdepth", "ecofed_fixprec", "ecofed_fixtau"]
-SEEDS = range(5)
+SEEDS = range(8)
 
 
 def tuned(ds, phi):
@@ -19,6 +19,9 @@ def main_jobs(ds, phi, T=80):
         for s in SEEDS:
             jobs.append(dict(exp="main", dataset=ds, fold=0 if ds == "uci_har" else s % 4, method=m,
                              kw=best[m]["kw"], cfg=dict(phi=phi, T=T, seed=s, lr=best[m]["lr"])))
+    for s in SEEDS:      # single-exit FedAvg for the lifecycle comparison (tuned FedAvg settings)
+        jobs.append(dict(exp="main", dataset=ds, fold=0 if ds == "uci_har" else s % 4, method="fedavg_single",
+                         kw={}, cfg=dict(phi=phi, T=T, seed=s, lr=best["fedavg"]["lr"])))
     if phi in (0.1, 0.25):
         for m in ABLATIONS:
             for s in SEEDS:
