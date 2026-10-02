@@ -1,0 +1,49 @@
+uci_har phi=0.1 fedavg          auc=0.8296 lr=0.143 {}
+uci_har phi=0.1 fedavg_q8       auc=0.8442 lr=0.143 {}
+uci_har phi=0.1 fedavg_paced    auc=0.8528 lr=0.087 {}
+uci_har phi=0.1 static_depth    auc=0.8865 lr=0.8 {}
+uci_har phi=0.1 fedprox         auc=0.8361 lr=0.087 {'mu': 0.001}
+uci_har phi=0.1 oort            auc=0.8600 lr=0.112 {'eps': 0.1, 'xi': 2.0}
+uci_har phi=0.1 energy_greedy   auc=0.8651 lr=0.143 {'eps': 0.1}
+uci_har phi=0.1 ecofed          auc=0.8711 lr=0.626 {'V': 2.0, 'gamma_pow': 0.5, 'q_floor': 0.1, 'rho_min': 0.3}
+uci_har phi=0.25 fedavg          auc=0.8619 lr=0.042 {}
+uci_har phi=0.25 fedavg_q8       auc=0.8653 lr=0.068 {}
+uci_har phi=0.25 fedavg_paced    auc=0.8677 lr=0.068 {}
+uci_har phi=0.25 static_depth    auc=0.8983 lr=0.489 {}
+uci_har phi=0.25 fedprox         auc=0.8612 lr=0.042 {'mu': 0.001}
+uci_har phi=0.25 oort            auc=0.8793 lr=0.087 {'eps': 0.1, 'xi': 2.0}
+uci_har phi=0.25 energy_greedy   auc=0.8883 lr=0.112 {'eps': 0.1}
+uci_har phi=0.25 ecofed          auc=0.8893 lr=0.299 {'V': 2.0, 'gamma_pow': 0.25, 'q_floor': 0.3, 'rho_min': 0.6}
+pamap2 phi=0.1 fedavg          auc=0.3779 lr=0.489 {}
+pamap2 phi=0.1 fedavg_q8       auc=0.3777 lr=0.087 {}
+pamap2 phi=0.1 fedavg_paced    auc=0.3645 lr=0.489 {}
+pamap2 phi=0.1 static_depth    auc=0.5225 lr=0.8 {}
+pamap2 phi=0.1 fedprox         auc=0.3731 lr=0.068 {'mu': 0.01}
+pamap2 phi=0.1 oort            auc=0.3870 lr=0.068 {'eps': 0.1, 'xi': 2.0}
+pamap2 phi=0.1 energy_greedy   auc=0.3870 lr=0.143 {'eps': 0.3}
+pamap2 phi=0.1 ecofed          auc=0.4669 lr=0.143 {'V': 2.0, 'gamma_pow': 0.5, 'q_floor': 0.1, 'rho_min': 0.6}
+pamap2 phi=0.25 fedavg          auc=0.4429 lr=0.8 {}
+pamap2 phi=0.25 fedavg_q8       auc=0.4495 lr=0.234 {}
+pamap2 phi=0.25 fedavg_paced    auc=0.4688 lr=0.489 {}
+pamap2 phi=0.25 static_depth    auc=0.5380 lr=0.8 {}
+pamap2 phi=0.25 fedprox         auc=0.4360 lr=0.626 {'mu': 0.01}
+pamap2 phi=0.25 oort            auc=0.4471 lr=0.112 {'eps': 0.3, 'xi': 1.0}
+pamap2 phi=0.25 energy_greedy   auc=0.4503 lr=0.087 {'eps': 0.1}
+pamap2 phi=0.25 ecofed          auc=0.5764 lr=0.489 {'V': 2.0, 'gamma_pow': 0.25, 'q_floor': 0.1, 'rho_min': 0.6}
+speech phi=0.1 fedavg          auc=0.2621 lr=0.068 {}
+speech phi=0.1 fedavg_q8       auc=0.2744 lr=0.112 {}
+speech phi=0.1 fedavg_paced    auc=0.2573 lr=0.053 {}
+speech phi=0.1 static_depth    auc=0.2779 lr=0.383 {}
+speech phi=0.1 fedprox         auc=0.2596 lr=0.112 {'mu': 0.1}
+speech phi=0.1 oort            auc=0.2583 lr=0.068 {'eps': 0.1, 'xi': 2.0}
+speech phi=0.1 energy_greedy   auc=0.2569 lr=0.143 {'eps': 0.1}
+speech phi=0.1 ecofed          auc=0.2772 lr=0.626 {'V': 2.0, 'gamma_pow': 0.5, 'q_floor': 0.03, 'rho_min': 0.6}
+speech phi=0.25 fedavg          auc=0.2990 lr=0.112 {}
+speech phi=0.25 fedavg_q8       auc=0.3180 lr=0.087 {}
+speech phi=0.25 fedavg_paced    auc=0.3471 lr=0.042 {}
+speech phi=0.25 static_depth    auc=0.3395 lr=0.299 {}
+speech phi=0.25 fedprox         auc=0.2946 lr=0.087 {'mu': 0.1}
+speech phi=0.25 oort            auc=0.2998 lr=0.087 {'eps': 0.1, 'xi': 1.0}
+speech phi=0.25 energy_greedy   auc=0.3101 lr=0.068 {'eps': 0.1}
+speech phi=0.25 ecofed          auc=0.3725 lr=0.8 {'V': 2.0, 'gamma_pow': 0.25, 'q_floor': 0.3, 'rho_min': 0.3}
+TUNEDONE

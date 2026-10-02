@@ -2,7 +2,7 @@
 import json
 import numpy as np
 from analysis.make_results import MAIN, TAB
-from analysis.style import DATASET_LABEL, METHOD_LABEL, SLOT, save, setup
+from analysis.style import DATASETS, DATASET_LABEL, METHOD_LABEL, SLOT, save, setup
 from fl.tasks import build_task
 
 plt = setup()
@@ -11,9 +11,9 @@ plt = setup()
 def hparam_table():
     out = ["\\begin{tabular}{@{}llllc@{}}", "\\toprule", "Data / $\\phi$ & Method & Knobs & lr & Validation AUC (\\%)\\\\", "\\midrule"]
     last = None
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in (0.1, 0.25):
-            best = json.load(open(f"results/best3_{ds}_{phi}.json"))
+            best = json.load(open(f"results/best4_{ds}_{phi}.json"))
             for m in MAIN:
                 d = best[m]
                 kw = ", ".join(f"{k}={v}" for k, v in d["kw"].items()) or "--"
@@ -29,8 +29,8 @@ def hparam_table():
 
 
 def noniid_figure():
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 2.6), gridspec_kw=dict(width_ratios=[1, 1.15]))
-    for ax, ds in zip(axes, ("uci_har", "pamap2")):
+    fig, axes = plt.subplots(1, 3, figsize=(7.6, 2.6), gridspec_kw=dict(width_ratios=[1, 1.15, 1]))
+    for ax, ds in zip(axes, DATASETS):
         t = build_task(ds, 0)
         M = np.array([np.bincount(y.numpy(), minlength=t.n_classes) / len(y) for _, y in t.clients.values()])
         im = ax.imshow(M.T, aspect="auto", cmap="Blues", vmin=0, vmax=0.6)

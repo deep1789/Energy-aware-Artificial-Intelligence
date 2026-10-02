@@ -39,6 +39,20 @@ DEVICE_PROFILES = {
 DEVICE_MIX = (("weak", 0.4), ("mid", 0.4), ("strong", 0.2))
 
 
+def _load_override():
+    """If ECOFED_DEVICE_JSON points to a file produced by energy/fit_profile.py (fitted from METERED hardware), use it
+    instead of the assumed constants above. The experiments in the paper do not set this variable."""
+    import json, os
+    path = os.environ.get("ECOFED_DEVICE_JSON")
+    if not path:
+        return
+    for name, d in json.load(open(path)).items():
+        DEVICE_PROFILES[name] = DeviceProfile(name, d["alpha"], d["beta"], d["tx_j_per_bit"], d["rx_j_per_bit"], d["battery_scale"])
+
+
+_load_override()
+
+
 class EnergyModel:
     def __init__(self, stats: list[BlockStats], in_ch: int, in_len: int):
         self.stats, self.L = stats, len(stats)

@@ -9,7 +9,7 @@ from scipy import stats
 from analysis import aggregate as AG
 from analysis.lifecycle import calibrate_and_test, exit_energies
 from analysis.make_results import MAIN, TAB, ci95, fmt
-from analysis.style import (DATASET_LABEL, INK, INK2, METHOD_COLOR, METHOD_LABEL, SLOT, save, setup)
+from analysis.style import (DATASETS, DATASET_LABEL, INK, INK2, METHOD_COLOR, METHOD_LABEL, SLOT, save, setup)
 from experiments.common import load_results
 from fl.tasks import build_task
 
@@ -56,7 +56,7 @@ def coverage_figure():
 # ------------------------------------------------------------------ sensitivity
 def sensitivity(main_df):
     out = {}
-    Rr = load_results("sens_radio")
+    Rr = load_results("s3_radio")
     if Rr:
         df = pd.DataFrame([dict(method=j["method"], radio=j["cfg"]["radio_scale"], seed=j["cfg"]["seed"],
                                 auc=AG_auc(r), acc25=AG_acc(r, 0.25), total=r["total_energy"] / r["fleet_capacity"]) for j, r in Rr])
@@ -68,7 +68,7 @@ def sensitivity(main_df):
         axes[0].set_xscale("log"); axes[0].set_xlabel("radio energy scale"); axes[0].set_ylabel("AUC of accuracy vs energy (%)")
         axes[0].set_title("(a) Radio-to-compute cost ratio", fontsize=8, fontweight="bold", loc="left")
         out["radio"] = df.groupby(["method", "radio"]).auc.mean().unstack().to_dict()
-    Re = load_results("sens_err")
+    Re = load_results("s3_err")
     if Re:
         df = pd.DataFrame([dict(method=j["method"], err=j["cfg"]["energy_err"], seed=j["cfg"]["seed"], auc=AG_auc(r)) for j, r in Re])
         base = main_df[(main_df.dataset == "pamap2") & (main_df.phi == 0.25) & (main_df.seed < 8)][["method", "seed", "auc"]].assign(err=0.0)
@@ -81,7 +81,7 @@ def sensitivity(main_df):
         ax.set_xlabel("std of log-error"); ax.set_ylabel("AUC of accuracy vs energy (%)")
         ax.set_title("(b) Energy-model misspecification", fontsize=8, fontweight="bold", loc="left")
         out["err"] = df.groupby(["method", "err"]).auc.mean().unstack().to_dict()
-    Ro = load_results("sens_ovh")
+    Ro = load_results("s3_ovh")
     if Ro:
         ax = axes[2]
         do = pd.DataFrame([dict(method=j["method"], ds=j["dataset"], ov=j["cfg"]["overhead_macs"], seed=j["cfg"]["seed"], auc=AG_auc(r)) for j, r in Ro])
@@ -117,7 +117,7 @@ def AG_acc(r, f):
 def lifecycle(phi_list=(0.25, 1.0), delta=0.01):
     rows = []
     tasks = {}
-    for job, r in load_results("m2"):
+    for job, r in load_results("m3"):
         phi = job["cfg"]["phi"]
         if phi not in phi_list or job["method"] not in ("ecofed", "fedavg", "fedavg_single", "oort", "energy_greedy", "static_depth"):
             continue
@@ -125,7 +125,7 @@ def lifecycle(phi_list=(0.25, 1.0), delta=0.01):
         if (ds, fold) not in tasks:
             tasks[(ds, fold)] = build_task(ds, fold)
         t = tasks[(ds, fold)]
-        e_exit = exit_energies(t.in_ch, t.n_classes)
+        e_exit = exit_energies(t.in_ch, t.n_classes, t.in_len)
         allowed = [3] if job["method"] == "fedavg_single" else None
         res = calibrate_and_test(r["val_probs"], t.val[1].numpy(), r["test_probs"], t.test[1].numpy(), e_exit, delta, allowed)
         rows.append(dict(dataset=ds, phi=phi, method=job["method"], seed=job["cfg"]["seed"], e_train=r["total_energy"],
@@ -141,15 +141,17 @@ def lifecycle(phi_list=(0.25, 1.0), delta=0.01):
 
 def lifecycle_outputs(df):
     TAB.mkdir(exist_ok=True)
+    n_dev_of = {"uci_har": 16, "pamap2": 20, "speech": 24}
+    rate_of = {"uci_har": 1 / 1.28, "pamap2": 1 / 1.28, "speech": 1 / 0.5}      # windows per second per device
     out = ["\\begin{tabular}{@{}llrrrrrr@{}}", "\\toprule",
            "Data / $\\phi$ & Model & Test acc. (\\%) & $E_{train}$ (J) & $\\bar e_{inf}$ ($\\mu$J) & exits at 1 (\\%) & $M_\\times$ ($10^5$) & days to $M_\\times$\\\\", "\\midrule"]
     last = None
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in (0.25, 1.0):
             sub = df[(df.dataset == ds) & (df.phi == phi)]
             if sub.empty:
                 continue
-            n_dev = 16 if ds == "uci_har" else 20
+            n_dev = n_dev_of[ds]
             for m, lab in (("fedavg_single", "FedAvg, single exit"), ("fedavg", "FedAvg, cascade"), ("ecofed", "EcoFed, cascade")):
                 s = sub[sub.method == m]
                 if s.empty:
@@ -162,14 +164,14 @@ def lifecycle_outputs(df):
                 acc = s.cascade_acc.mean() * 100
                 e_inf = s.cascade_energy.mean()
                 xo = s.e_train.mean() / e_inf
-                days = xo / (n_dev * 24 * 3600 / 1.28)      # one window every 1.28 s per device, always-on
+                days = xo / (n_dev * 24 * 3600 * rate_of[ds])      # always-on, one window per 1/rate seconds per device
                 out.append(f"{lead} & {lab} & {acc:.1f} & {s.e_train.mean():.1f} & {e_inf*1e6:.0f} & {s.exit1.mean()*100:.0f} & {xo/1e5:.2f} & {days:.2f}\\\\")
     out += ["\\bottomrule", "\\end{tabular}"]
     (TAB / "lifecycle.tex").write_text("\n".join(out))
     # figure: lifecycle energy vs number of inferences
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 2.6), sharey=True)
+    fig, axes = plt.subplots(1, 3, figsize=(7.6, 2.6), sharey=True)
     M = np.logspace(3, 8, 100)
-    for ax, ds in zip(axes, ("uci_har", "pamap2")):
+    for ax, ds in zip(axes, DATASETS):
         sub = df[(df.dataset == ds) & (df.phi == 1.0)]
         for m, lab, col, ls in (("fedavg_single", "FedAvg, single exit", METHOD_COLOR["fedavg_single"], "--"),
                                 ("fedavg", "FedAvg, cascade", METHOD_COLOR["fedavg"], "-"),
@@ -188,13 +190,14 @@ def lifecycle_outputs(df):
 
 
 def lambda_figure(main_df):
-    R = load_results("lam_sweep")
+    R = load_results("s3_lam")
     if not R:
         return
-    fig, axes = plt.subplots(1, 4, figsize=(7.6, 2.6))
+    fig, axes = plt.subplots(2, 3, figsize=(7.6, 5.4))
+    axes = axes.T.reshape(-1)
     k = 0
     summary = {}
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in (0.25, 1.0):
             ax = axes[k]; k += 1
             sub = main_df[(main_df.dataset == ds) & (main_df.phi == phi) & (main_df.seed < 8)]
@@ -217,15 +220,15 @@ def lambda_figure(main_df):
             summary[f"{ds}_{phi}"] = g.to_dict("list")
     h = [plt.Line2D([], [], color=METHOD_COLOR["ecofed"], marker="o", label="EcoFed, shadow price $\\lambda$ (labels)")]
     h += [plt.Line2D([], [], color=METHOD_COLOR[m], marker="o", lw=0, label=METHOD_LABEL[m]) for m in MAIN if m != "ecofed"]
-    fig.legend(handles=h, loc="lower center", ncol=4, fontsize=6.5, bbox_to_anchor=(0.5, -0.12))
-    fig.tight_layout(); save(fig, "fig10_pareto")
+    fig.legend(handles=h, loc="lower center", ncol=4, fontsize=6.5, bbox_to_anchor=(0.5, -0.06))
+    fig.tight_layout(rect=(0, 0.06, 1, 1)); save(fig, "fig10_pareto")
     json.dump(summary, open("results/lambda_sweep_summary.json", "w"), indent=1, default=float)
 
 
 def exit_table(main_df):
     out = ["\\begin{tabular}{@{}llrrrr@{}}", "\\toprule", "Data / $\\phi$ & Method & Exit 1 & Exit 2 & Exit 3 & Exit 4\\\\", "\\midrule"]
     last = None
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in (0.25,):
             sub = main_df[(main_df.dataset == ds) & (main_df.phi == phi)]
             for m in ("ecofed", "static_depth", "oort", "fedavg", "fedavg_single"):
@@ -269,7 +272,7 @@ def AG_ckpt(r):
 
 
 if __name__ == "__main__":
-    main_df = AG.per_run_table("m2")
+    main_df = AG.per_run_table("m3")
     coverage_figure()
     sensitivity(main_df)
     lambda_figure(main_df)

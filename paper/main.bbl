@@ -18,7 +18,8 @@
   \bibinfo{author}{Li, J.}, \bibinfo{author}{Tomioka, R.},
   \bibinfo{author}{Vojnovic, M.}, \bibinfo{year}{2017}.
 \newblock \bibinfo{title}{{QSGD}: Communication-efficient {SGD} via gradient
-  quantization and encoding}, in: \bibinfo{booktitle}{Proc. NeurIPS}.
+  quantization and encoding}, in: \bibinfo{booktitle}{Advances in Neural
+  Information Processing Systems (NeurIPS)}.
 %Type = Inproceedings
 \bibitem[{Anguita et~al.(2013)Anguita, Ghio, Oneto, Parra and
   Reyes-Ortiz}]{anguita2013public}
@@ -26,18 +27,32 @@
   \bibinfo{author}{Oneto, L.}, \bibinfo{author}{Parra, X.},
   \bibinfo{author}{Reyes-Ortiz, J.L.}, \bibinfo{year}{2013}.
 \newblock \bibinfo{title}{A public domain dataset for human activity
-  recognition using smartphones}, in: \bibinfo{booktitle}{Proc. ESANN}.
+  recognition using smartphones}, in: \bibinfo{booktitle}{Proc. European
+  Symposium on Artificial Neural Networks, Computational Intelligence and
+  Machine Learning (ESANN)}.
 %Type = Inproceedings
-\bibitem[{Banbury et~al.(2021)Banbury, Reddi et~al.}]{banbury2021mlperf}
-\bibinfo{author}{Banbury, C.}, \bibinfo{author}{Reddi, V.J.}, et~al.,
-  \bibinfo{year}{2021}.
+\bibitem[{Banbury et~al.(2021)Banbury, Reddi, Torelli, Holleman, Jeffries
+  et~al.}]{banbury2021mlperf}
+\bibinfo{author}{Banbury, C.}, \bibinfo{author}{Reddi, V.J.},
+  \bibinfo{author}{Torelli, P.}, \bibinfo{author}{Holleman, J.},
+  \bibinfo{author}{Jeffries, N.}, et~al., \bibinfo{year}{2021}.
 \newblock \bibinfo{title}{{MLPerf Tiny} benchmark}, in:
-  \bibinfo{booktitle}{Proc. NeurIPS Datasets and Benchmarks}.
+  \bibinfo{booktitle}{Advances in Neural Information Processing Systems
+  (NeurIPS), Datasets and Benchmarks Track}.
 %Type = Inproceedings
-\bibitem[{Bonawitz et~al.(2019)}]{bonawitz2019towards}
-\bibinfo{author}{Bonawitz, K.}, et~al., \bibinfo{year}{2019}.
+\bibitem[{Bonawitz et~al.(2019)Bonawitz, Eichner, Grieskamp, Huba, Ingerman,
+  Ivanov, Kiddon, Kone{\v c}n{\'y}, Mazzocchi, McMahan, Van~Overveldt, Petrou,
+  Ramage and Roselander}]{bonawitz2019towards}
+\bibinfo{author}{Bonawitz, K.}, \bibinfo{author}{Eichner, H.},
+  \bibinfo{author}{Grieskamp, W.}, \bibinfo{author}{Huba, D.},
+  \bibinfo{author}{Ingerman, A.}, \bibinfo{author}{Ivanov, V.},
+  \bibinfo{author}{Kiddon, C.}, \bibinfo{author}{Kone{\v c}n{\'y}, J.},
+  \bibinfo{author}{Mazzocchi, S.}, \bibinfo{author}{McMahan, B.},
+  \bibinfo{author}{Van~Overveldt, T.}, \bibinfo{author}{Petrou, D.},
+  \bibinfo{author}{Ramage, D.}, \bibinfo{author}{Roselander, J.},
+  \bibinfo{year}{2019}.
 \newblock \bibinfo{title}{Towards federated learning at scale: System design},
-  in: \bibinfo{booktitle}{Proc. MLSys}.
+  in: \bibinfo{booktitle}{Proceedings of Machine Learning and Systems}.
 %Type = Article
 \bibitem[{Cho et~al.(2020)Cho, Wang and Joshi}]{cho2020client}
 \bibinfo{author}{Cho, Y.J.}, \bibinfo{author}{Wang, J.},
@@ -50,15 +65,18 @@
 \bibinfo{author}{Diao, E.}, \bibinfo{author}{Ding, J.},
   \bibinfo{author}{Tarokh, V.}, \bibinfo{year}{2021}.
 \newblock \bibinfo{title}{{HeteroFL}: Computation and communication efficient
-  federated learning for heterogeneous clients}, in: \bibinfo{booktitle}{Proc.
-  ICLR}.
+  federated learning for heterogeneous clients}, in:
+  \bibinfo{booktitle}{International Conference on Learning Representations
+  (ICLR)}.
 %Type = Inproceedings
 \bibitem[{Hammerla et~al.(2016)Hammerla, Halloran and
   Pl{\"o}tz}]{hammerla2016deep}
 \bibinfo{author}{Hammerla, N.Y.}, \bibinfo{author}{Halloran, S.},
   \bibinfo{author}{Pl{\"o}tz, T.}, \bibinfo{year}{2016}.
 \newblock \bibinfo{title}{Deep, convolutional, and recurrent models for human
-  activity recognition using wearables}, in: \bibinfo{booktitle}{Proc. IJCAI}.
+  activity recognition using wearables}, in: \bibinfo{booktitle}{Proceedings of
+  the Twenty-Fifth International Joint Conference on Artificial Intelligence
+  (IJCAI-16)}.
 %Type = Article
 \bibitem[{Henderson et~al.(2020)Henderson, Hu, Romoff, Brunskill, Jurafsky and
   Pineau}]{henderson2020towards}
@@ -69,19 +87,21 @@
 \newblock \bibinfo{title}{Towards the systematic reporting of the energy and
   carbon footprints of machine learning}.
 \newblock \bibinfo{journal}{Journal of Machine Learning Research}
-  \bibinfo{volume}{21}.
+  \bibinfo{volume}{21}, \bibinfo{pages}{1--43}.
 %Type = Inproceedings
 \bibitem[{Ilhan et~al.(2023)Ilhan, Su and Liu}]{ilhan2023scalefl}
 \bibinfo{author}{Ilhan, F.}, \bibinfo{author}{Su, G.}, \bibinfo{author}{Liu,
   L.}, \bibinfo{year}{2023}.
 \newblock \bibinfo{title}{{ScaleFL}: Resource-adaptive federated learning with
-  heterogeneous clients}, in: \bibinfo{booktitle}{Proc. CVPR}.
+  heterogeneous clients}, in: \bibinfo{booktitle}{Proceedings of the IEEE/CVF
+  Conference on Computer Vision and Pattern Recognition (CVPR)}.
 %Type = Article
-\bibitem[{Kairouz et~al.(2021)}]{kairouz2021advances}
-\bibinfo{author}{Kairouz, P.}, et~al., \bibinfo{year}{2021}.
+\bibitem[{Kairouz et~al.(2021)Kairouz, McMahan et~al.}]{kairouz2021advances}
+\bibinfo{author}{Kairouz, P.}, \bibinfo{author}{McMahan, H.B.}, et~al.,
+  \bibinfo{year}{2021}.
 \newblock \bibinfo{title}{Advances and open problems in federated learning}.
 \newblock \bibinfo{journal}{Foundations and Trends in Machine Learning}
-  \bibinfo{volume}{14}.
+  \bibinfo{volume}{14}, \bibinfo{pages}{1--210}.
 %Type = Inproceedings
 \bibitem[{Karimireddy et~al.(2020)Karimireddy, Kale, Mohri, Reddi, Stich and
   Suresh}]{karimireddy2020scaffold}
@@ -90,19 +110,24 @@
   \bibinfo{author}{Stich, S.}, \bibinfo{author}{Suresh, A.T.},
   \bibinfo{year}{2020}.
 \newblock \bibinfo{title}{{SCAFFOLD}: Stochastic controlled averaging for
-  federated learning}, in: \bibinfo{booktitle}{Proc. ICML}.
+  federated learning}, in: \bibinfo{booktitle}{Proceedings of the 37th
+  International Conference on Machine Learning (ICML)}, pp.
+  \bibinfo{pages}{5132--5143}.
 %Type = Inproceedings
 \bibitem[{Kaya et~al.(2019)Kaya, Hong and Dumitras}]{kaya2019shallow}
 \bibinfo{author}{Kaya, Y.}, \bibinfo{author}{Hong, S.},
   \bibinfo{author}{Dumitras, T.}, \bibinfo{year}{2019}.
 \newblock \bibinfo{title}{Shallow-deep networks: Understanding and mitigating
-  network overthinking}, in: \bibinfo{booktitle}{Proc. ICML}.
+  network overthinking}, in: \bibinfo{booktitle}{Proceedings of the 36th
+  International Conference on Machine Learning (ICML)}, pp.
+  \bibinfo{pages}{3301--3310}.
 %Type = Inproceedings
 \bibitem[{Kim et~al.(2023)Kim, Yu, Kim and Moon}]{kim2023depthfl}
 \bibinfo{author}{Kim, M.}, \bibinfo{author}{Yu, S.}, \bibinfo{author}{Kim, S.},
   \bibinfo{author}{Moon, S.M.}, \bibinfo{year}{2023}.
 \newblock \bibinfo{title}{{DepthFL}: Depthwise federated learning for
-  heterogeneous clients}, in: \bibinfo{booktitle}{Proc. ICLR}.
+  heterogeneous clients}, in: \bibinfo{booktitle}{International Conference on
+  Learning Representations (ICLR)}.
 %Type = Article
 \bibitem[{Kone{\v c}n{\'y} et~al.(2016)Kone{\v c}n{\'y}, McMahan, Yu,
   Richt{\'a}rik, Suresh and Bacon}]{konecny2016federated}
@@ -119,7 +144,9 @@
   \bibinfo{author}{Madhyastha, H.V.}, \bibinfo{author}{Chowdhury, M.},
   \bibinfo{year}{2021}.
 \newblock \bibinfo{title}{Oort: Efficient federated learning via guided
-  participant selection}, in: \bibinfo{booktitle}{Proc. OSDI}.
+  participant selection}, in: \bibinfo{booktitle}{15th USENIX Symposium on
+  Operating Systems Design and Implementation (OSDI 21)}, pp.
+  \bibinfo{pages}{19--35}.
 %Type = Inproceedings
 \bibitem[{Li et~al.(2020a)Li, Sahu, Zaheer, Sanjabi, Talwalkar and
   Smith}]{li2020fedprox}
@@ -128,21 +155,22 @@
   \bibinfo{author}{Talwalkar, A.}, \bibinfo{author}{Smith, V.},
   \bibinfo{year}{2020}a.
 \newblock \bibinfo{title}{Federated optimization in heterogeneous networks},
-  in: \bibinfo{booktitle}{Proc. MLSys}.
+  in: \bibinfo{booktitle}{Proceedings of Machine Learning and Systems (MLSys)}.
 %Type = Inproceedings
 \bibitem[{Li et~al.(2020b)Li, Huang, Yang, Wang and Zhang}]{li2020convergence}
 \bibinfo{author}{Li, X.}, \bibinfo{author}{Huang, K.}, \bibinfo{author}{Yang,
   W.}, \bibinfo{author}{Wang, S.}, \bibinfo{author}{Zhang, Z.},
   \bibinfo{year}{2020}b.
 \newblock \bibinfo{title}{On the convergence of {FedAvg} on non-{IID} data},
-  in: \bibinfo{booktitle}{Proc. ICLR}.
+  in: \bibinfo{booktitle}{International Conference on Learning Representations
+  (ICLR)}.
 %Type = Inproceedings
 \bibitem[{Lin et~al.(2020)Lin, Chen, Lin, Cohn, Gan and Han}]{lin2020mcunet}
 \bibinfo{author}{Lin, J.}, \bibinfo{author}{Chen, W.M.}, \bibinfo{author}{Lin,
   Y.}, \bibinfo{author}{Cohn, J.}, \bibinfo{author}{Gan, C.},
   \bibinfo{author}{Han, S.}, \bibinfo{year}{2020}.
 \newblock \bibinfo{title}{{MCUNet}: Tiny deep learning on {IoT} devices}, in:
-  \bibinfo{booktitle}{Proc. NeurIPS}.
+  \bibinfo{booktitle}{Advances in Neural Information Processing Systems}.
 %Type = Inproceedings
 \bibitem[{McMahan et~al.(2017)McMahan, Moore, Ramage, Hampson and
   y~Arcas}]{mcmahan2017communication}
@@ -150,7 +178,9 @@
   \bibinfo{author}{Ramage, D.}, \bibinfo{author}{Hampson, S.},
   \bibinfo{author}{y~Arcas, B.A.}, \bibinfo{year}{2017}.
 \newblock \bibinfo{title}{Communication-efficient learning of deep networks
-  from decentralized data}, in: \bibinfo{booktitle}{Proc. AISTATS}.
+  from decentralized data}, in: \bibinfo{booktitle}{Proceedings of the 20th
+  International Conference on Artificial Intelligence and Statistics
+  (AISTATS)}, pp. \bibinfo{pages}{1273--1282}.
 %Type = Book
 \bibitem[{Neely(2010)}]{neely2010stochastic}
 \bibinfo{author}{Neely, M.J.}, \bibinfo{year}{2010}.
@@ -163,21 +193,30 @@
   \bibinfo{year}{2016}.
 \newblock \bibinfo{title}{Deep convolutional and {LSTM} recurrent neural
   networks for multimodal wearable activity recognition}.
-\newblock \bibinfo{journal}{Sensors} \bibinfo{volume}{16}.
+\newblock \bibinfo{journal}{Sensors} \bibinfo{volume}{16},
+  \bibinfo{pages}{115}.
 %Type = Article
-\bibitem[{Patterson et~al.(2021)}]{patterson2021carbon}
-\bibinfo{author}{Patterson, D.}, et~al., \bibinfo{year}{2021}.
+\bibitem[{Patterson et~al.(2021)Patterson, Gonzalez, Le, Liang, Munguia,
+  Rothchild, So, Texier and Dean}]{patterson2021carbon}
+\bibinfo{author}{Patterson, D.}, \bibinfo{author}{Gonzalez, J.},
+  \bibinfo{author}{Le, Q.}, \bibinfo{author}{Liang, C.},
+  \bibinfo{author}{Munguia, L.M.}, \bibinfo{author}{Rothchild, D.},
+  \bibinfo{author}{So, D.}, \bibinfo{author}{Texier, M.},
+  \bibinfo{author}{Dean, J.}, \bibinfo{year}{2021}.
 \newblock \bibinfo{title}{Carbon emissions and large neural network training}.
 \newblock \bibinfo{journal}{arXiv preprint arXiv:2104.10350} .
 %Type = Article
-\bibitem[{Qiu et~al.(2023)Qiu, Parcollet, Fernandez-Marques
-  et~al.}]{qiu2023first}
+\bibitem[{Qiu et~al.(2023)Qiu, Parcollet, Fernandez-Marques, Gusmao, Gao,
+  Beutel, Topal, Mathur and Lane}]{qiu2023first}
 \bibinfo{author}{Qiu, X.}, \bibinfo{author}{Parcollet, T.},
-  \bibinfo{author}{Fernandez-Marques, J.}, et~al., \bibinfo{year}{2023}.
+  \bibinfo{author}{Fernandez-Marques, J.}, \bibinfo{author}{Gusmao, P.P.B.},
+  \bibinfo{author}{Gao, Y.}, \bibinfo{author}{Beutel, D.J.},
+  \bibinfo{author}{Topal, T.}, \bibinfo{author}{Mathur, A.},
+  \bibinfo{author}{Lane, N.D.}, \bibinfo{year}{2023}.
 \newblock \bibinfo{title}{A first look into the carbon footprint of federated
   learning}.
 \newblock \bibinfo{journal}{Journal of Machine Learning Research}
-  \bibinfo{volume}{24}.
+  \bibinfo{volume}{24}, \bibinfo{pages}{1--23}.
 %Type = Inproceedings
 \bibitem[{Reddi et~al.(2021)Reddi, Charles, Zaheer, Garrett, Rush, Kone{\v
   c}n{\'y}, Kumar and McMahan}]{reddi2021adaptive}
@@ -187,13 +226,15 @@
   \bibinfo{author}{Kumar, S.}, \bibinfo{author}{McMahan, H.B.},
   \bibinfo{year}{2021}.
 \newblock \bibinfo{title}{Adaptive federated optimization}, in:
-  \bibinfo{booktitle}{Proc. ICLR}.
+  \bibinfo{booktitle}{International Conference on Learning Representations
+  (ICLR)}.
 %Type = Inproceedings
 \bibitem[{Reiss and Stricker(2012)}]{reiss2012introducing}
 \bibinfo{author}{Reiss, A.}, \bibinfo{author}{Stricker, D.},
   \bibinfo{year}{2012}.
 \newblock \bibinfo{title}{Introducing a new benchmarked dataset for activity
-  monitoring}, in: \bibinfo{booktitle}{Proc. ISWC}.
+  monitoring}, in: \bibinfo{booktitle}{Proc. IEEE International Symposium on
+  Wearable Computers (ISWC)}, pp. \bibinfo{pages}{108--109}.
 %Type = Article
 \bibitem[{Scardapane et~al.(2020)Scardapane, Scarpiniti, Baccarelli and
   Uncini}]{scardapane2020should}
@@ -201,21 +242,24 @@
   \bibinfo{author}{Baccarelli, E.}, \bibinfo{author}{Uncini, A.},
   \bibinfo{year}{2020}.
 \newblock \bibinfo{title}{Why should we add early exits to neural networks?}
-\newblock \bibinfo{journal}{Cognitive Computation} \bibinfo{volume}{12}.
+\newblock \bibinfo{journal}{Cognitive Computation} \bibinfo{volume}{12},
+  \bibinfo{pages}{954--966}.
 %Type = Inproceedings
 \bibitem[{Strubell et~al.(2019)Strubell, Ganesh and
   McCallum}]{strubell2019energy}
 \bibinfo{author}{Strubell, E.}, \bibinfo{author}{Ganesh, A.},
   \bibinfo{author}{McCallum, A.}, \bibinfo{year}{2019}.
 \newblock \bibinfo{title}{Energy and policy considerations for deep learning in
-  {NLP}}, in: \bibinfo{booktitle}{Proc. ACL}.
+  {NLP}}, in: \bibinfo{booktitle}{Proc. Annual Meeting of the Association for
+  Computational Linguistics (ACL)}.
 %Type = Inproceedings
 \bibitem[{Teerapittayanon et~al.(2016)Teerapittayanon, McDanel and
   Kung}]{teerapittayanon2016branchynet}
 \bibinfo{author}{Teerapittayanon, S.}, \bibinfo{author}{McDanel, B.},
   \bibinfo{author}{Kung, H.T.}, \bibinfo{year}{2016}.
 \newblock \bibinfo{title}{{BranchyNet}: Fast inference via early exiting from
-  deep neural networks}, in: \bibinfo{booktitle}{Proc. ICPR}.
+  deep neural networks}, in: \bibinfo{booktitle}{2016 23rd International
+  Conference on Pattern Recognition (ICPR)}, pp. \bibinfo{pages}{2464--2469}.
 %Type = Inproceedings
 \bibitem[{Tran et~al.(2019)Tran, Bao, Zomaya, Nguyen and
   Hong}]{tran2019federated}
@@ -223,13 +267,18 @@
   \bibinfo{author}{Zomaya, A.}, \bibinfo{author}{Nguyen, M.N.H.},
   \bibinfo{author}{Hong, C.S.}, \bibinfo{year}{2019}.
 \newblock \bibinfo{title}{Federated learning over wireless networks:
-  Optimization model design and analysis}, in: \bibinfo{booktitle}{Proc. IEEE
-  INFOCOM}.
+  Optimization model design and analysis}, in: \bibinfo{booktitle}{IEEE INFOCOM
+  2019 - IEEE Conference on Computer Communications}, pp.
+  \bibinfo{pages}{1387--1395}.
 %Type = Inproceedings
-\bibitem[{Wu et~al.(2022)}]{wu2022sustainable}
-\bibinfo{author}{Wu, C.J.}, et~al., \bibinfo{year}{2022}.
+\bibitem[{Wu et~al.(2022)Wu, Raghavendra, Gupta, Acun, Ardalani
+  et~al.}]{wu2022sustainable}
+\bibinfo{author}{Wu, C.J.}, \bibinfo{author}{Raghavendra, R.},
+  \bibinfo{author}{Gupta, U.}, \bibinfo{author}{Acun, B.},
+  \bibinfo{author}{Ardalani, N.}, et~al., \bibinfo{year}{2022}.
 \newblock \bibinfo{title}{Sustainable {AI}: Environmental implications,
-  challenges and opportunities}, in: \bibinfo{booktitle}{Proc. MLSys}.
+  challenges and opportunities}, in: \bibinfo{booktitle}{Proceedings of Machine
+  Learning and Systems (MLSys)}.
 %Type = Article
 \bibitem[{Yang et~al.(2021)Yang, Chen, Saad, Hong and
   Shikh-Bahaei}]{yang2021energy}
@@ -239,12 +288,14 @@
 \newblock \bibinfo{title}{Energy efficient federated learning over wireless
   communication networks}.
 \newblock \bibinfo{journal}{IEEE Transactions on Wireless Communications}
-  \bibinfo{volume}{20}.
+  \bibinfo{volume}{20}, \bibinfo{pages}{1935--1949}.
 %Type = Inproceedings
 \bibitem[{You et~al.(2023)You, Chung and Chowdhury}]{you2023zeus}
 \bibinfo{author}{You, J.}, \bibinfo{author}{Chung, J.W.},
   \bibinfo{author}{Chowdhury, M.}, \bibinfo{year}{2023}.
 \newblock \bibinfo{title}{Zeus: Understanding and optimizing {GPU} energy
-  consumption of {DNN} training}, in: \bibinfo{booktitle}{Proc. NSDI}.
+  consumption of {DNN} training}, in: \bibinfo{booktitle}{20th USENIX Symposium
+  on Networked Systems Design and Implementation (NSDI 23)}, pp.
+  \bibinfo{pages}{119--139}.
 
 \end{thebibliography}

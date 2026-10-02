@@ -20,7 +20,8 @@ METHOD_LABEL = {
     "ecofed_fixdepth": "EcoFed, fixed depth", "ecofed_fixprec": "EcoFed, fixed precision",
     "ecofed_fixtau": "EcoFed, fixed epochs",
 }
-DATASET_LABEL = {"uci_har": "UCI HAR", "pamap2": "PAMAP2"}
+DATASET_LABEL = {"uci_har": "UCI HAR", "pamap2": "PAMAP2", "speech": "Speech Commands"}
+DATASETS = ("uci_har", "pamap2", "speech")
 
 
 def setup():

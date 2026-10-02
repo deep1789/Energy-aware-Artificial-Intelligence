@@ -1,0 +1,62 @@
+{
+ "fedavg": {
+  "kw": {},
+  "lr": 0.068,
+  "val_auc": 0.2621479760307939,
+  "n_trials": 14
+ },
+ "fedavg_q8": {
+  "kw": {},
+  "lr": 0.112,
+  "val_auc": 0.274358894018389,
+  "n_trials": 14
+ },
+ "fedavg_paced": {
+  "kw": {},
+  "lr": 0.053,
+  "val_auc": 0.25727302914153344,
+  "n_trials": 14
+ },
+ "static_depth": {
+  "kw": {},
+  "lr": 0.383,
+  "val_auc": 0.2779485495588824,
+  "n_trials": 14
+ },
+ "fedprox": {
+  "kw": {
+   "mu": 0.1
+  },
+  "lr": 0.112,
+  "val_auc": 0.25956508456977,
+  "n_trials": 14
+ },
+ "oort": {
+  "kw": {
+   "eps": 0.1,
+   "xi": 2.0
+  },
+  "lr": 0.068,
+  "val_auc": 0.2583092322694128,
+  "n_trials": 14
+ },
+ "energy_greedy": {
+  "kw": {
+   "eps": 0.1
+  },
+  "lr": 0.143,
+  "val_auc": 0.25693356595072947,
+  "n_trials": 14
+ },
+ "ecofed": {
+  "kw": {
+   "V": 2.0,
+   "gamma_pow": 0.5,
+   "q_floor": 0.03,
+   "rho_min": 0.6
+  },
+  "lr": 0.626,
+  "val_auc": 0.2772326814558637,
+  "n_trials": 14
+ }
+}

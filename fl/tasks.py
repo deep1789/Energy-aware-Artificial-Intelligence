@@ -58,4 +58,11 @@ def build_task(name: str, fold: int = 0, root: str = "data") -> Task:
         val = norm(data.subset(np.isin(data.subjects, val_ids)))
         test = norm(data.subset(np.isin(data.subjects, test_ids)))
         return Task(name, clients, _tensors(val), _tensors(test), 12, 18, 128)
+    if name == "speech":
+        from data_loaders.speech_commands import load_speech_cached
+        clients, val, test = load_speech_cached(root)
+        allx = np.concatenate([x for x, _ in clients.values()])
+        mean, std = allx.mean(axis=(0, 2), keepdims=True), allx.std(axis=(0, 2), keepdims=True) + 1e-6
+        tt = lambda x, y: (torch.from_numpy(((x - mean) / std).astype(np.float32)), torch.from_numpy(y))
+        return Task(name, {i: tt(x, y) for i, (x, y) in clients.items()}, tt(*val), tt(*test), 12, 40, 48)
     raise ValueError(name)

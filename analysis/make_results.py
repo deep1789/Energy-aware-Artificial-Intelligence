@@ -8,7 +8,7 @@ import pandas as pd
 from scipy import stats
 
 from analysis import aggregate as AG
-from analysis.style import (DATASET_LABEL, GRID, INK, INK2, METHOD_COLOR, METHOD_LABEL, SLOT, save, setup)
+from analysis.style import (DATASETS, DATASET_LABEL, GRID, INK, INK2, METHOD_COLOR, METHOD_LABEL, SLOT, save, setup)
 
 plt = setup()
 TAB = Path("paper/tables"); TAB.mkdir(parents=True, exist_ok=True)
@@ -44,9 +44,9 @@ def fmt(m, c=None, d=3, pct=False):
 
 # ------------------------------------------------------------------ figures
 def fig_curves(df):
-    fig, axes = plt.subplots(2, 3, figsize=(7.4, 4.4), sharex=True)
+    fig, axes = plt.subplots(3, 3, figsize=(7.4, 6.3), sharex=True)
     grid = np.linspace(0.0, 1.0, 201)
-    for i, ds in enumerate(("uci_har", "pamap2")):
+    for i, ds in enumerate(DATASETS):
         for j, phi in enumerate(PHIS):
             ax = axes[i, j]
             sub = df[(df.dataset == ds) & (df.phi == phi)]
@@ -62,7 +62,7 @@ def fig_curves(df):
             ax.set_title(f"{DATASET_LABEL[ds]}, $\\phi={phi}$", fontsize=8, loc="left", fontweight="bold")
             if j == 0:
                 ax.set_ylabel("test accuracy (best exit)")
-            if i == 1:
+            if i == 2:
                 ax.set_xlabel("fraction of fleet capacity spent")
     axes[0, 0].legend(loc="lower right", ncol=1, fontsize=6.5)
     fig.tight_layout()
@@ -70,9 +70,10 @@ def fig_curves(df):
 
 
 def fig_eta(df):
-    fig, axes = plt.subplots(1, 4, figsize=(7.4, 2.5))
+    fig, axes = plt.subplots(2, 3, figsize=(7.4, 5.0))
+    axes = axes.T.reshape(-1)
     k = 0
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in (0.25, 1.0):
             ax = axes[k]; k += 1
             sub = df[(df.dataset == ds) & (df.phi == phi)]
@@ -85,7 +86,7 @@ def fig_eta(df):
                                 ms=4.5 if m != "ecofed" else 6, capsize=2, lw=1)
                 ax.text(1.02, yi, f"{len(ok)}/{len(v)}", transform=ax.get_yaxis_transform(), fontsize=6, color=INK2, va="center")
                 labs.append(METHOD_LABEL[m])
-            ax.set_yticks(range(len(MAIN))); ax.set_yticklabels(labs if k == 1 else [""] * len(MAIN), fontsize=7)
+            ax.set_yticks(range(len(MAIN))); ax.set_yticklabels(labs if k in (1, 2) else [""] * len(MAIN), fontsize=7)
             ax.set_title(f"{DATASET_LABEL[ds]}, $\\phi={phi}$", fontsize=8, loc="left", fontweight="bold")
             ax.set_xlabel("energy to 90% of plateau (J)", fontsize=7.5)
             ax.set_xscale("log")
@@ -97,9 +98,10 @@ def fig_eta(df):
 
 
 def fig_dots(df, metric, name, xlabel, phis=(0.1, 0.25), pct=False):
-    fig, axes = plt.subplots(1, 4, figsize=(7.4, 2.6))
+    fig, axes = plt.subplots(2, 3, figsize=(7.4, 5.0))
+    axes = axes.T.reshape(-1)
     k = 0
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in phis:
             ax = axes[k]; k += 1
             sub = df[(df.dataset == ds) & (df.phi == phi)]
@@ -109,7 +111,7 @@ def fig_dots(df, metric, name, xlabel, phis=(0.1, 0.25), pct=False):
                     continue
                 s = 100 if pct else 1
                 ax.errorbar(np.nanmean(v) * s, yi, xerr=ci95(v) * s, fmt="o", color=METHOD_COLOR[m], ms=4.5 if m != "ecofed" else 6, capsize=2, lw=1)
-            ax.set_yticks(range(len(MAIN))); ax.set_yticklabels([METHOD_LABEL[m] for m in MAIN[::-1]] if k == 1 else [""] * len(MAIN), fontsize=7)
+            ax.set_yticks(range(len(MAIN))); ax.set_yticklabels([METHOD_LABEL[m] for m in MAIN[::-1]] if k in (1, 2) else [""] * len(MAIN), fontsize=7)
             ax.set_title(f"{DATASET_LABEL[ds]}, $\\phi={phi}$", fontsize=8, loc="left", fontweight="bold")
             ax.set_xlabel(xlabel)
     fig.tight_layout()
@@ -119,7 +121,7 @@ def fig_dots(df, metric, name, xlabel, phis=(0.1, 0.25), pct=False):
 # ------------------------------------------------------------------ tables
 def table_main(df):
     rows = []
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in PHIS:
             sub = df[(df.dataset == ds) & (df.phi == phi)]
             best25 = sub.groupby("method").acc25.mean().max()
@@ -160,7 +162,7 @@ def paired_table(df, metric, fname, baselines=None, scale=100.0, ratio=False):
     Holm-corrected within each (dataset, phi) setting across the baselines; bootstrap 95% CI of the mean."""
     baselines = baselines or [m for m in MAIN if m != "ecofed"]
     blocks = []
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in PHIS:
             sub = df[(df.dataset == ds) & (df.phi == phi)]
             rows = []
@@ -203,7 +205,7 @@ def table_ablation(df):
     out = ["\\begin{tabular}{@{}llrrrrr@{}}", "\\toprule",
            "Data / $\\phi$ & Variant & Acc@25\\% & Acc@100\\% & AUC & Exit-4 acc. & mean depth\\\\", "\\midrule"]
     last = None
-    for ds in ("uci_har", "pamap2"):
+    for ds in DATASETS:
         for phi in (0.1, 0.25):
             sub = df[(df.dataset == ds) & (df.phi == phi)]
             for m in abl:
@@ -222,7 +224,7 @@ def table_ablation(df):
 
 
 if __name__ == "__main__":
-    df = AG.per_run_table("m2")
+    df = AG.per_run_table("m3")
     df = AG.add_eta(df)
     df.drop(columns=["_res"]).to_csv("results/main_runs.csv", index=False)
     json.dump(df.attrs["ref_plateau"], open("results/ref_plateau.json", "w"))
