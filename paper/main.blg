@@ -18,45 +18,45 @@ Warning--empty pages in lin2020mcunet
 Warning--empty pages in reddi2021adaptive
 Warning--empty pages in strubell2019energy
 Warning--empty pages in wu2022sustainable
-You've used 32 entries,
+You've used 33 entries,
             2990 wiz_defined-function locations,
-            790 strings with 12481 characters,
-and the built_in function-call counts, 24840 in all, are:
-= -- 1782
-> -- 1312
-< -- 11
-+ -- 505
-- -- 468
-* -- 2817
-:= -- 3638
-add.period$ -- 74
-call.type$ -- 32
-change.case$ -- 312
-chr.to.int$ -- 31
-cite$ -- 46
-duplicate$ -- 1789
-empty$ -- 1638
-format.name$ -- 566
-if$ -- 4608
+            795 strings with 12612 characters,
+and the built_in function-call counts, 25273 in all, are:
+= -- 1814
+> -- 1322
+< -- 12
++ -- 509
+- -- 471
+* -- 2850
+:= -- 3707
+add.period$ -- 77
+call.type$ -- 33
+change.case$ -- 318
+chr.to.int$ -- 32
+cite$ -- 47
+duplicate$ -- 1829
+empty$ -- 1676
+format.name$ -- 570
+if$ -- 4689
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 359
-newline$ -- 153
-num.names$ -- 128
-pop$ -- 741
+missing$ -- 365
+newline$ -- 158
+num.names$ -- 132
+pop$ -- 758
 preamble$ -- 1
-purify$ -- 281
+purify$ -- 286
 quote$ -- 0
-skip$ -- 597
+skip$ -- 612
 stack$ -- 0
-substring$ -- 760
-swap$ -- 1328
+substring$ -- 771
+swap$ -- 1346
 text.length$ -- 8
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 285
+type$ -- 294
 warning$ -- 14
-while$ -- 131
+while$ -- 134
 width$ -- 0
-write$ -- 422
+write$ -- 435
 (There were 14 warnings)

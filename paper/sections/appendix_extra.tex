@@ -4,7 +4,7 @@
 Table~\ref{tab:hparams} lists the configurations selected on validation data. The $\phi=1$ runs reuse the $\phi=0.25$ configuration.
 \begin{table}[h]
 \centering\scriptsize
-\caption{Selected hyper-parameters per method, dataset and budget (mean validation AUC over the two tuning seeds). $\mu$: FedProx weight; $\epsilon$, $\xi$: exploration fraction and speed exponent; EcoFed: \texttt{rho\_min} $=\rho^{\min}$, \texttt{q\_floor} $=\lambda$, \texttt{gamma\_pow} $=\kappa_d$, $V=2$.}\label{tab:hparams}
+\caption{Selected hyper-parameters per method, dataset and budget from 14 random-search trials each (mean validation AUC over the two tuning seeds); lr: learning rate. $\mu$: FedProx weight; $\epsilon$, $\xi$: exploration fraction and speed exponent; EcoFed: \texttt{rho\_min} $=\rho^{\min}$, \texttt{q\_floor} $=\lambda$, \texttt{gamma\_pow} $=\kappa_d$, $V=2$.}\label{tab:hparams}
 \setlength{\tabcolsep}{3pt}
 \resizebox{\textwidth}{!}{\input{tables/hparams}}
 \end{table}
@@ -12,7 +12,7 @@ Table~\ref{tab:hparams} lists the configurations selected on validation data. Th
 \subsection{Client label distributions}
 \begin{figure}[h]
 \centering\includegraphics[width=0.95\textwidth]{fig_a1_noniid}
-\caption{Share of each activity class in each client's training windows. UCI HAR clients are persons who all performed all activities; PAMAP2 clients are time chunks of a sequential protocol and hold three to five classes.}\label{fig:pamap-noniid}
+\caption{Share of each activity class in each client's training windows. UCI HAR clients are persons who all performed all activities; PAMAP2 clients are time chunks of a sequential protocol and hold three to five classes; Speech Commands clients are speakers (class 10 is the capped ``unknown'' class, class 11 silence).}\label{fig:pamap-noniid}
 \end{figure}
 
 \subsection{Paired comparisons}\label{app:paired}

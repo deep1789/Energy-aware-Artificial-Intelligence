@@ -1,4 +1,4 @@
-\begin{thebibliography}{32}
+\begin{thebibliography}{33}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\href}[2]{#2}
@@ -270,6 +270,12 @@
   Optimization model design and analysis}, in: \bibinfo{booktitle}{IEEE INFOCOM
   2019 - IEEE Conference on Computer Communications}, pp.
   \bibinfo{pages}{1387--1395}.
+%Type = Article
+\bibitem[{Warden(2018)}]{warden2018speech}
+\bibinfo{author}{Warden, P.}, \bibinfo{year}{2018}.
+\newblock \bibinfo{title}{Speech commands: A dataset for limited-vocabulary
+  speech recognition}.
+\newblock \bibinfo{journal}{arXiv preprint arXiv:1804.03209} .
 %Type = Inproceedings
 \bibitem[{Wu et~al.(2022)Wu, Raghavendra, Gupta, Acun, Ardalani
   et~al.}]{wu2022sustainable}
