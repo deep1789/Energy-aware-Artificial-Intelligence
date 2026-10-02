@@ -1,0 +1,17 @@
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Data / $\phi$ & Method & Exit 1 & Exit 2 & Exit 3 & Exit 4\\
+\midrule
+UCI HAR, 0.25 & EcoFed & 85.3 & 84.4 & 84.9 & 85.0\\
+ & Static-Depth & 85.8 & 85.3 & 85.8 & 81.2\\
+ & Oort-style & 57.5 & 82.1 & 83.8 & 84.2\\
+ & FedAvg & 55.9 & 82.9 & 84.3 & 84.7\\
+ & FedAvg (single exit) & 15.1 & 15.2 & 15.2 & 87.2\\
+\midrule
+PAMAP2, 0.25 & EcoFed & 57.5 & 52.3 & 46.9 & 44.4\\
+ & Static-Depth & 44.5 & 32.8 & 30.2 & 28.1\\
+ & Oort-style & 27.5 & 31.6 & 29.1 & 27.7\\
+ & FedAvg & 24.5 & 35.5 & 29.9 & 28.8\\
+ & FedAvg (single exit) & 8.2 & 6.5 & 8.0 & 31.4\\
+\bottomrule
+\end{tabular}

@@ -1,7 +1,7 @@
 \section{Proof of Theorem~\ref{thm:main}}\label{app:proof}
 Write $\gamma=\eta\tau$ and let $\hat g_t$ be the aggregated direction, so that $\mathbf w^{t+1}=\mathbf w^t-\gamma\hat g_t$. All expectations are conditional on $\mathbf w^t$ unless stated otherwise; the participation and depth process is independent of the iterate by assumption.
 
-\paragraph{Step 1: bias decomposition.}
+\paragraph{Step 1: bias decomposition}
 For client $k$ with depth $d$, let $g_k=\frac1\tau\sum_{i<\tau}\tilde\nabla F_k^{(d)}(\mathbf w_{k,i})$ be the average of its local stochastic gradients along the local trajectory $\mathbf w_{k,0}=\mathbf w^t$. By (A2) $\|\mathbf w_{k,i}-\mathbf w^t\|\le\eta iG$. Since stochastic gradients are unbiased given the local iterate and $F_k^{(d)}$ is $L_s$-smooth,
 \[
 \big\|\mathbb E[g_k]-\nabla F_k^{(d)}(\mathbf w^t)\big\|\le\frac1\tau\sum_{i<\tau}L_s\eta iG=\frac{L_s\eta G(\tau-1)}2\le\frac{L_sG\gamma}2=:\varepsilon .
@@ -12,7 +12,7 @@ Quantisation is unbiased (A3), so it does not change the mean. For block $l$ the
 \]
 and by Minkowski's inequality the stacked drift over all blocks has norm at most $\varepsilon$.
 
-\paragraph{Step 2: truncation bias.}
+\paragraph{Step 2: truncation bias}
 Since $\nabla_lF_k^{(d)}=\sum_{j=l}^{d}\lambda_j\nabla_lf_k^{j}$,
 \[
 \mathbb E_d\big[\nabla_lF_k^{(d)}\mid d\ge l\big]=\sum_{j\ge l}\lambda_j\Pr[d\ge j\mid d\ge l]\,\nabla_lf_k^{j}.
@@ -23,7 +23,7 @@ For $j>l$ we have $\{d\ge j\}\subseteq\{d\ge l\}$, hence $\Pr[d\ge j\mid d\ge l]
 \]
 and averaging over $k$ with weights $p_k$ gives block bias at most $B_l$. Stacking the blocks, $\mathbb E[\hat g_t]=\nabla F(\mathbf w^t)-b_t+e_t$ with $\|b_t\|\le B$ and $\|e_t\|\le\varepsilon$.
 
-\paragraph{Step 3: descent.}
+\paragraph{Step 3: descent}
 By $L_s$-smoothness of $F$, $F(\mathbf w^{t+1})\le F(\mathbf w^t)-\gamma\langle\nabla F(\mathbf w^t),\hat g_t\rangle+\frac{L_s\gamma^2}{2}\|\hat g_t\|^2$. Using $\langle a,a-c\rangle\ge\frac12\|a\|^2-\frac12\|c\|^2$,
 \[
 \mathbb E\langle\nabla F,\hat g_t\rangle\ge\tfrac12\|\nabla F\|^2-\tfrac12(B+\varepsilon)^2 ,
@@ -37,7 +37,7 @@ For $\gamma\le1/(4L_s)$ the coefficients are at least $\frac14$ and at most $\fr
 \frac1T\sum_t\mathbb E\|\nabla F(\mathbf w^t)\|^2\le\frac{4\Delta}{\gamma T}+3(B+\varepsilon)^2+2L_s\gamma\sigma_h^2 .
 \]
 
-\paragraph{Step 4: constants.}
+\paragraph{Step 4: constants}
 Using $(B+\varepsilon)^2\le2B^2+2\varepsilon^2$ and $\varepsilon\le L_sG\gamma/2$, we get $3(B+\varepsilon)^2\le6B^2+\frac32L_s^2G^2\gamma^2\le6B^2+\frac38L_sG^2\gamma\le6B^2+2L_s\gamma\frac{G^2}4$, where the second inequality uses $\gamma\le1/(4L_s)$. Hence the bound is at most $\frac{4\Delta}{\gamma T}+2L_s\gamma\tilde\sigma^2+6B^2$ with $\tilde\sigma^2=\sigma_h^2+G^2/4$. If $\gamma=\sqrt{\Delta/(L_s\tilde\sigma^2T)}\le1/(4L_s)$ the first two terms sum to $6\sqrt{L_s\tilde\sigma^2\Delta/T}$. Otherwise $\gamma=1/(4L_s)$ and $\sqrt{\Delta/(L_s\tilde\sigma^2T)}>1/(4L_s)$, so the first term equals $16L_s\Delta/T$ and the second is at most $2\sqrt{L_s\tilde\sigma^2\Delta/T}$. In both cases \eqref{eq:thm} holds. \qed
 
 \paragraph{Corollary~\ref{cor:cov}.}

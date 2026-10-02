@@ -1,0 +1,21 @@
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+Data / $\phi$ & Model & Test acc. (\%) & $E_{train}$ (J) & $\bar e_{inf}$ ($\mu$J) & exits at 1 (\%) & $M_\times$ ($10^5$) & days to $M_\times$\\
+\midrule
+UCI HAR, 0.25 & FedAvg, single exit & 87.2 & 116.1 & 845 & 0 & 1.37 & 0.13\\
+ & FedAvg, cascade & 83.9 & 116.1 & 250 & 31 & 4.65 & 0.43\\
+ & EcoFed, cascade & 85.6 & 70.7 & 114 & 98 & 6.19 & 0.57\\
+\midrule
+UCI HAR, 1.0 & FedAvg, single exit & 89.1 & 378.9 & 845 & 0 & 4.49 & 0.42\\
+ & FedAvg, cascade & 86.5 & 378.9 & 209 & 48 & 18.16 & 1.68\\
+ & EcoFed, cascade & 86.4 & 176.5 & 169 & 86 & 10.47 & 0.97\\
+\midrule
+PAMAP2, 0.25 & FedAvg, single exit & 31.4 & 136.2 & 950 & 0 & 1.43 & 0.11\\
+ & FedAvg, cascade & 32.7 & 136.2 & 611 & 7 & 2.23 & 0.17\\
+ & EcoFed, cascade & 54.5 & 148.2 & 378 & 73 & 3.92 & 0.29\\
+\midrule
+PAMAP2, 1.0 & FedAvg, single exit & 47.6 & 555.9 & 950 & 0 & 5.85 & 0.43\\
+ & FedAvg, cascade & 46.6 & 555.9 & 450 & 22 & 12.36 & 0.92\\
+ & EcoFed, cascade & 58.6 & 472.8 & 436 & 55 & 10.85 & 0.80\\
+\bottomrule
+\end{tabular}

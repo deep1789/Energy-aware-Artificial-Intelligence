@@ -1,0 +1,70 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: elsarticle-harv.bst
+Database file #1: refs.bib
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--empty pages in alistarh2017qsgd
+Warning--empty pages in anguita2013public
+Warning--empty pages in banbury2021mlperf
+Warning--empty pages in bonawitz2019towards
+Warning--empty pages in diao2021heterofl
+Warning--empty pages in hammerla2016deep
+Warning--empty pages in ilhan2023scalefl
+Warning--empty pages in karimireddy2020scaffold
+Warning--empty pages in kaya2019shallow
+Warning--empty pages in kim2023depthfl
+Warning--empty pages in lai2021oort
+Warning--empty pages in li2020fedprox
+Warning--empty pages in li2020convergence
+Warning--empty pages in lin2020mcunet
+Warning--empty pages in mcmahan2017communication
+Warning--empty pages in reddi2021adaptive
+Warning--empty pages in reiss2012introducing
+Warning--empty pages in strubell2019energy
+Warning--empty pages in teerapittayanon2016branchynet
+Warning--empty pages in tran2019federated
+Warning--empty pages in wu2022sustainable
+Warning--empty pages in you2023zeus
+You've used 32 entries,
+            2990 wiz_defined-function locations,
+            762 strings with 10504 characters,
+and the built_in function-call counts, 20784 in all, are:
+= -- 1442
+> -- 1056
+< -- 7
++ -- 409
+- -- 372
+* -- 2310
+:= -- 3165
+add.period$ -- 74
+call.type$ -- 32
+change.case$ -- 277
+chr.to.int$ -- 31
+cite$ -- 54
+duplicate$ -- 1603
+empty$ -- 1432
+format.name$ -- 474
+if$ -- 3782
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 313
+newline$ -- 153
+num.names$ -- 128
+pop$ -- 714
+preamble$ -- 1
+purify$ -- 246
+quote$ -- 0
+skip$ -- 492
+stack$ -- 0
+substring$ -- 356
+swap$ -- 1041
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 285
+warning$ -- 22
+while$ -- 96
+width$ -- 0
+write$ -- 414
+(There were 22 warnings)

@@ -64,6 +64,15 @@ class MultiExitCNN1D(nn.Module):
                 if k.startswith(f"blocks.{j}.") or k.startswith(f"heads.{j}.")]
 
 
-def multi_exit_loss(logits: list[torch.Tensor], y: torch.Tensor) -> torch.Tensor:
-    """Mean cross-entropy over the exits that were computed (equal exit weights)."""
-    return sum(F.cross_entropy(z, y) for z in logits) / len(logits)
+def exit_weights(n: int, scheme: str = "uniform") -> list[float]:
+    """Normalised weights over the first n exits. 'linear' puts weight proportional to the exit index."""
+    raw = {"uniform": [1.0] * n, "linear": [float(j + 1) for j in range(n)],
+           "quad": [float((j + 1) ** 2) for j in range(n)]}[scheme]
+    z = sum(raw)
+    return [r / z for r in raw]
+
+
+def multi_exit_loss(logits: list[torch.Tensor], y: torch.Tensor, scheme: str = "uniform") -> torch.Tensor:
+    """Weighted cross-entropy over the exits that were computed (weights normalised over those exits)."""
+    w = exit_weights(len(logits), scheme)
+    return sum(wi * F.cross_entropy(z, y) for wi, z in zip(w, logits))

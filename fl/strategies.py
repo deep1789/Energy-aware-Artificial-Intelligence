@@ -145,11 +145,12 @@ class EcoFed(Base):
     name = "ecofed"
 
     def __init__(self, V=2.0, rho_min=0.5, use_energy_q=True, use_cov_q=True,
-                 depths=None, bits=BITS, taus=TAUS, tag=None, kappa=1.0, gamma_pow=1.0, q_floor=0.0):
+                 depths=None, bits=BITS, taus=TAUS, tag=None, kappa=1.0, gamma_pow=1.0, q_floor=0.0, sample=False):
         self.V, self.rho_min = V, rho_min
         self.use_energy_q, self.use_cov_q = use_energy_q, use_cov_q
         self.depths_opt, self.bits_opt, self.taus_opt = depths, bits, taus
         self.kappa, self.gamma_pow, self.q_floor = kappa, gamma_pow, q_floor
+        self.sample = sample
         if tag:
             self.name = tag
 
@@ -186,6 +187,11 @@ class EcoFed(Base):
                     best, best_s = c, s
             if best is not None and best_s > 0:
                 cands.append((best_s, k, best))
+        if self.sample and len(cands) > self.m:
+            # randomised selection: draw m clients without replacement with probability proportional to the score
+            w = np.array([c[0] for c in cands])
+            idx = self.rng.choice(len(cands), size=self.m, replace=False, p=w / w.sum())
+            return [(int(cands[i][1]), cands[i][2]) for i in idx]
         cands.sort(key=lambda x: -x[0])
         return [(int(k), c) for _, k, c in cands[:self.m]]
 

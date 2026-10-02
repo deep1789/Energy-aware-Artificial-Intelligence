@@ -1,0 +1,72 @@
+\section{Results}\label{sec:results}
+
+All statements below refer to the evaluation seeds (16 per method and setting for the main comparison, 8 for ablations and sensitivity studies), to test subjects that never appear in training or validation, and to \emph{model-based} energy (Section~\ref{sec:energymodel}). ``Significant'' means a Holm-corrected paired $t$-test at $p<0.05$ within a (dataset, $\phi$) setting across the seven baselines; the full paired tables are in \ref{app:paired}. Differences are in percentage points (pp) of test accuracy.
+
+\subsection{Accuracy under a fixed energy budget}\label{sec:main-results}
+Table~\ref{tab:main} and Fig.~\ref{fig:curves} compare all methods. Three regimes emerge.
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{Main results (mean $\pm$ 95\% CI over 16 seeds). Acc@25\%: accuracy when 25\% of the fleet capacity has been spent. Final acc.: accuracy of the best exit after 80 rounds. Best-ckpt: accuracy at the validation-selected checkpoint (an early-stopping oracle available to every method) and the fleet energy spent up to it. Energy used and the share of devices whose battery is below 2\% of capacity (Depl.) at the end. Bold: best in column among methods within a setting (accuracy columns).}\label{tab:main}
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{\input{tables/main}}
+\end{table}
+
+\begin{figure}[t]
+\centering\includegraphics[width=\textwidth]{fig4_accuracy_vs_energy}
+\caption{Test accuracy (best exit) against the fraction of fleet capacity spent; mean over seeds, shaded band is the 95\% CI of EcoFed. Methods that stop early keep their final accuracy; energy-blind baselines peak and then lose accuracy when batteries run out and the surviving clients dominate the aggregate.}\label{fig:curves}
+\end{figure}
+
+\paragraph{Strongly non-IID data and a binding budget (PAMAP2, $\phi\le0.25$): large gains}
+At $\phi=0.25$ the final accuracy of EcoFed is 55.9\%, against 28.7--45.5\% for the baselines. The paired differences are $+10.4$ to $+27.2$ pp and significant against all seven baselines, including Static-Depth ($+12.1$ pp, 95\% CI $[8.3,15.9]$). With early stopping the margin shrinks but remains significant against six of seven baselines ($+7.3$ to $+10.9$ pp); Static-Depth is within noise ($+2.0$ pp, CI $[-2.3,6.6]$). At $\phi=0.1$ the final accuracy is again significantly higher than for every baseline ($+5.9$ to $+15.3$ pp), but the picture with early stopping reverses against the one baseline that never trains deep blocks: Static-Depth reaches 48.7\% at its best checkpoint against 41.0\% for EcoFed ($-7.8$ pp, CI $[-12.8,-3.0]$, Holm $p=0.068$). That baseline's final accuracy is 33.9\%: after its peak the accuracy of every energy-blind method falls while the fleet's batteries run out (Fig.~\ref{fig:curves}, bottom left), which is consistent with the surviving clients dominating a strongly label-skewed aggregate, although we did not isolate this cause. Its last exit is also essentially untrained (9.1\% accuracy at exit 4 against 37.5\% for EcoFed). Static-Depth is therefore a strong competitor at the tightest budget if the operator can detect the peak and stop; EcoFed is the better choice if the deployed model must also have usable deep exits, or if training cannot be stopped at the best checkpoint.
+
+\paragraph{Loose budget (PAMAP2, $\phi=1$): parity with the best heuristics, less energy}
+With energy no longer scarce the best-checkpoint accuracies of EcoFed (57.8\%), Static-Depth (58.7\%), single-exit FedAvg (58.4\%) and FedAvg-Paced (58.1\%) are indistinguishable (EcoFed is within $0.9$ pp of Static-Depth and $0.3$ pp of FedAvg-Paced, Holm $p=1.0$ for both), while EcoFed's final accuracy is significantly higher than that of FedAvg, FedProx, FedAvg-Q8, Oort-style and Energy-greedy ($+5.7$ to $+11.9$ pp). EcoFed spends 473~J against 511--570~J for the baselines other than Static-Depth (470~J).
+
+\paragraph{Near-IID labels (UCI HAR): equal accuracy at much lower energy, but a small accuracy cost}
+In UCI HAR all clients see all six activities, only the sensor placement and the person change, and every method reaches 84--89\% accuracy after a few rounds (Fig.~\ref{fig:curves}, top). EcoFed's final accuracy is statistically indistinguishable from the baselines at $\phi=0.1$ and $0.25$ and 1.8 pp below FedAvg-Paced at $\phi=1$ (significant). At the validation-selected checkpoint it is up to 2.7 pp lower than the multi-exit baselines (significant against FedAvg, FedProx and FedAvg-Paced at $\phi=0.25$ only) and 2.3--3.4 pp lower than single-exit FedAvg. In exchange it spends 1.6 times (at $\phi=0.25$) and 2.2 times (at $\phi=1$) less fleet energy than FedAvg over the run, and only 0.8--2.3\% of devices end below 2\% of battery capacity against 17--31\% for the energy-blind methods. At $\phi=0.1$ the picture is different: the baselines stop early because the remaining batteries cannot afford a full-depth round (they leave 28\% of the capacity stranded), whereas EcoFed uses 86\% of the capacity and ends with 19.5\% of the devices drained; this is the price of using the energy that is there.
+
+\subsection{Energy to reach a target accuracy}
+Fig.~\ref{fig:eta} reports the fleet energy needed to reach 90\% of the accuracy that FedAvg reaches when energy is not scarce. On UCI HAR, EcoFed reaches the target with 8.0~J at $\phi=0.1$ and $0.25$ and 16.5~J at $\phi=1$, which is 1.4 to 3.8 times less than FedAvg, FedProx, FedAvg-Q8 and FedAvg-Paced (significant in 11 of 12 comparisons; the exception is FedAvg-Paced at $\phi=0.1$, ratio 1.43, Holm $p=0.064$), and 1.6 to 2.2 times less than Oort-style and Energy-greedy at $\phi\le0.25$. At $\phi=1$ Oort-style and Energy-greedy are faster by about 20\% (12.9~J against 16.5~J; not significant after correction). Static-Depth is statistically tied with EcoFed on this metric on both datasets. On PAMAP2 the target is not always reached within the horizon (at $\phi=0.1$ 4 of 16 seeds for FedAvg and 9 of 16 for EcoFed, against 14 of 16 for Static-Depth), so the ratios are computed on the seeds in which both methods reach it: at $\phi=0.25$ EcoFed needs 1.9--2.5 times less energy than every baseline except Static-Depth (ratio 1.02).
+
+\begin{figure}[t]
+\centering\includegraphics[width=\textwidth]{fig5_eta}
+\caption{Fleet energy to reach 90\% of the FedAvg plateau (mean with 95\% CI over the seeds that reach it; the fraction on the right is the number of seeds that reach it).}\label{fig:eta}
+\end{figure}
+
+\subsection{Where the gains come from: ablations}\label{sec:ablation}
+Table~\ref{tab:ablation} removes one ingredient at a time (8 seeds). Differences are paired by seed; $p$-values below are unadjusted paired $t$-tests and should be read as descriptive.
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{Ablations of EcoFed (mean $\pm$ 95\% CI over 8 seeds). Exit-4 acc.: test accuracy of the last exit, which is only trained by clients that reach full depth.}\label{tab:ablation}
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{\input{tables/ablation}}
+\end{table}
+
+\emph{The energy queue is essential.} Without it clients keep running expensive configurations until their batteries are empty: 42--82 pp more devices end drained, 29--56 J more energy is spent at $\phi=0.25$, and final accuracy drops by 4.7--24.6 pp (all four settings, $p\le0.006$). \emph{Depth and epoch control matter more than precision control.} Forcing full depth lowers final accuracy by 3.3 to 18.6 pp (significant in three of the four settings; 26 to 83 J less energy is used because clients cannot afford it); forcing two epochs costs 1.6 to 10.6 pp (significant only at HAR $\phi=0.25$). Forcing 32-bit uploads changes accuracy by at most 1.9 pp and is never significant; this is expected given the energy breakdown of Fig.~\ref{fig:energy}, where radio energy is a small share of the cost of a participation in our default setting. We return to this in Section~\ref{sec:sens}. \emph{The coverage queue protects the deep exits.} Without it the last exit loses 21.0 pp on PAMAP2 at $\phi=0.1$ ($p<0.001$; final accuracy $-12.1$ pp, $p=0.012$), 6.0 pp at $\phi=0.25$ and 4.2 pp on HAR at $\phi=0.1$ ($p=0.03$); at looser budgets the effect is within noise. The best-checkpoint accuracy does not suffer (shallow exits are enough to classify), so the coverage queue matters for the quality of the whole multi-exit model rather than for the accuracy of its best exit. This is the behaviour the theory predicts and we test it directly next.
+
+\begin{figure}[t]
+\centering\includegraphics[width=0.9\textwidth]{fig3_energy_decomposition}
+\caption{Modelled energy of one participation ($n=350$ samples, 2 epochs, 32-bit upload) by depth, split into arithmetic, memory traffic and radio, for the three device classes. For this small network on-device arithmetic dominates; radio energy is visible only for the LTE-class device.}\label{fig:energy}
+\end{figure}
+
+\subsection{The coverage floor is visible in the data}\label{sec:coverage-exp}
+Theorem~\ref{thm:main} predicts that, for a fixed horizon, the final gradient norm grows with $(1-\sigma)^2$. We test this with a controlled probe that removes every other source of variation: no energy limit, uniform client sampling, and a depth that is $L=4$ with probability $\sigma$ and $1$ otherwise, so that $\Pr[d\ge j]=\sigma$ for $j\ge2$ (6 seeds $\times$ 8 values of $\sigma$ $\times$ 2 datasets, 100 rounds). Fig.~\ref{fig:cov} shows the squared norm of the gradient of the full multi-exit objective at the final iterate. It rises with $(1-\sigma)^2$ on both datasets: the linear fit has slope $0.88$ and $R^2=0.14$ on UCI HAR (Spearman $\rho=0.30$, $p=0.037$) and slope $18.7$ and $R^2=0.24$ on PAMAP2 ($\rho=0.51$, $p=2\times10^{-4}$). The relation is noisy and the bound is not tight---we do not claim it is---but the sign, the monotone trend and the quadratic shape are what the theorem predicts, and the last-exit accuracy falls accordingly (from 90.3\% at $\sigma=1$ to 87.6\% at $\sigma=0.1$ on UCI HAR; Fig.~\ref{fig:cov}, right). Note that the practical aggregator used in the experiments is the sample-normalised average, not the Horvitz--Thompson weighting of the analysis; the probe therefore tests the prediction for the aggregator that is actually deployed.
+
+\begin{figure}[t]
+\centering\includegraphics[width=\textwidth]{fig6_coverage_floor}
+\caption{Coverage probe. Left and middle: squared full-objective gradient norm at the final iterate against $(1-\sigma)^2$ (mean and 95\% CI over 6 seeds, with a least-squares line over the individual runs). Right: last-exit test accuracy against the coverage $\sigma$ of the deep blocks.}\label{fig:cov}
+\end{figure}
+
+\subsection{An energy--accuracy frontier from one knob}\label{sec:pareto}
+\input{sections/results_pareto}
+
+\subsection{Robustness to the energy model}\label{sec:sens}
+\input{sections/results_sens}
+
+\subsection{Lifecycle energy}\label{sec:lifecycle}
+\input{sections/results_life}
+
+\subsection{Controller overhead}\label{sec:overhead}
+\input{sections/results_overhead}

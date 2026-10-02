@@ -87,8 +87,11 @@ def fig_eta(df):
                 labs.append(METHOD_LABEL[m])
             ax.set_yticks(range(len(MAIN))); ax.set_yticklabels(labs if k == 1 else [""] * len(MAIN), fontsize=7)
             ax.set_title(f"{DATASET_LABEL[ds]}, $\\phi={phi}$", fontsize=8, loc="left", fontweight="bold")
-            ax.set_xlabel("fleet energy to 90% of plateau (J)")
+            ax.set_xlabel("energy to 90% of plateau (J)", fontsize=7.5)
             ax.set_xscale("log")
+            from matplotlib.ticker import NullFormatter, FuncFormatter
+            ax.xaxis.set_minor_formatter(NullFormatter()); ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+            lo, hi = ax.get_xlim(); ax.set_xticks([t for t in (5, 10, 20, 30, 50, 100, 200, 300, 500) if lo <= t <= hi])
     fig.tight_layout()
     save(fig, "fig5_eta")
 
@@ -121,6 +124,7 @@ def table_main(df):
             sub = df[(df.dataset == ds) & (df.phi == phi)]
             best25 = sub.groupby("method").acc25.mean().max()
             best100 = sub.groupby("method").acc100.mean().max()
+            bestck = sub.groupby("method").ckpt_acc.mean().max()
             for m in MAIN:
                 s = sub[sub.method == m]
                 if s.empty:
@@ -128,14 +132,15 @@ def table_main(df):
                 eta = s["eta90"].values
                 ok = eta[~np.isnan(eta)]
                 a25, a100 = s.acc25.mean(), s.acc100.mean()
+                ck = s.ckpt_acc.mean()
                 rows.append(dict(ds=DATASET_LABEL[ds], phi=phi, m=METHOD_LABEL[m], a25=fmt(a25, ci95(s.acc25), pct=True),
                                  a25b=a25 >= best25 - 1e-9, a100=fmt(a100, ci95(s.acc100), pct=True), a100b=a100 >= best100 - 1e-9,
-                                 auc=fmt(s.auc.mean(), ci95(s.auc), pct=True),
-                                 eta=(fmt(ok.mean(), None, d=1) if len(ok) else "--") + f" ({len(ok)}/{len(eta)})",
-                                 jain=fmt(s.jain.mean(), None, d=2), dep=fmt(s.depleted.mean(), None, pct=True),
+                                 auc=fmt(ck, ci95(s.ckpt_acc), pct=True) + "", ckb=ck >= bestck - 1e-9,
+                                 eta=fmt(s.ckpt_E.mean(), None, d=0),
+                                 jain=fmt(s.total_E.mean(), None, d=0), dep=fmt(s.depleted.mean(), None, pct=True),
                                  ex4=fmt(s.final_exit4.mean(), None, pct=True)))
     out = ["\\begin{tabular}{@{}llrrrrrr@{}}", "\\toprule",
-           "Data / $\\phi$ & Method & Acc@25\\% & Acc@100\\% & AUC & ETA$_{90}$ (J, reached) & Jain & Depl.\\ (\\%)\\\\", "\\midrule"]
+           "Data / $\\phi$ & Method & Acc@25\\% & Final acc. & Best-ckpt acc. & Ckpt energy (J) & Energy used (J) & Depl.\\ (\\%)\\\\", "\\midrule"]
     last = None
     for r in rows:
         key = (r["ds"], r["phi"])
@@ -145,48 +150,50 @@ def table_main(df):
         last = key
         b = lambda t, flag: f"\\textbf{{{t}}}" if flag else t
         name = f"\\textbf{{{r['m']}}}" if r["m"] == "EcoFed" else r["m"]
-        out.append(f"{lead} & {name} & {b(r['a25'], r['a25b'])} & {b(r['a100'], r['a100b'])} & {r['auc']} & {r['eta']} & {r['jain']} & {r['dep']}\\\\")
+        out.append(f"{lead} & {name} & {b(r['a25'], r['a25b'])} & {b(r['a100'], r['a100b'])} & {b(r['auc'], r['ckb'])} & {r['eta']} & {r['jain']} & {r['dep']}\\\\")
     out += ["\\bottomrule", "\\end{tabular}"]
     (TAB / "main.tex").write_text("\n".join(out))
 
 
-def paired_table(df, metric, fname, baselines=None, scale=100.0, lower_better=False, ratio=False):
+def paired_table(df, metric, fname, baselines=None, scale=100.0, ratio=False):
+    """EcoFed vs each baseline, paired by seed. Two-sided paired t-test (on log ratios when ratio=True),
+    Holm-corrected within each (dataset, phi) setting across the baselines; bootstrap 95% CI of the mean."""
     baselines = baselines or [m for m in MAIN if m != "ecofed"]
-    rows, pv = [], []
+    blocks = []
     for ds in ("uci_har", "pamap2"):
         for phi in PHIS:
             sub = df[(df.dataset == ds) & (df.phi == phi)]
+            rows = []
             for b in baselines:
+                A = sub[sub.method == "ecofed"].set_index("seed")[metric]
+                B = sub[sub.method == b].set_index("seed")[metric]
+                idx = A.index.intersection(B.index)
                 if ratio:
-                    A = sub[sub.method == "ecofed"].set_index("seed")[metric]
-                    B = sub[sub.method == b].set_index("seed")[metric]
-                    idx = A.index.intersection(B.index)
-                    r = (B.loc[idx] / A.loc[idx]).replace([np.inf, -np.inf], np.nan).dropna().values
-                    res = dict(n=len(r), diff=float(np.mean(r)) if len(r) else np.nan, lo=np.nan, hi=np.nan, p=np.nan)
-                    if len(r) >= 3:
-                        rng = np.random.default_rng(0)
-                        bt = [rng.choice(r, len(r)).mean() for _ in range(4000)]
-                        res.update(lo=float(np.percentile(bt, 2.5)), hi=float(np.percentile(bt, 97.5)))
-                        d = np.log(r)
-                        res["p"] = float(stats.wilcoxon(d).pvalue) if np.any(d != 0) else 1.0
+                    v = (B.loc[idx] / A.loc[idx]).replace([np.inf, -np.inf], np.nan).dropna().values
+                    d = np.log(v) if len(v) else v
                 else:
-                    res = AG.paired_test(sub, metric, "ecofed", b)
-                    for k in ("diff", "lo", "hi"):
-                        res[k] = res[k] * scale
-                rows.append((DATASET_LABEL[ds], phi, METHOD_LABEL[b], res)); pv.append(res["p"])
-    adj = AG.holm([1.0 if np.isnan(p) else p for p in pv])
+                    v = ((A.loc[idx] - B.loc[idx]) * scale).dropna().values
+                    d = v
+                res = dict(n=len(v), diff=float(np.mean(v)) if len(v) else np.nan, lo=np.nan, hi=np.nan, p=1.0)
+                if len(v) >= 3:
+                    rng = np.random.default_rng(0)
+                    bt = [rng.choice(v, len(v)).mean() for _ in range(4000)]
+                    res.update(lo=float(np.percentile(bt, 2.5)), hi=float(np.percentile(bt, 97.5)))
+                    res["p"] = float(stats.ttest_1samp(d, 0.0).pvalue) if np.std(d) > 0 else 1.0
+                rows.append((METHOD_LABEL[b], res))
+            adj = AG.holm([r["p"] for _, r in rows])
+            blocks.append((DATASET_LABEL[ds], phi, rows, adj))
+    head = "mean ratio (baseline/EcoFed)" if ratio else "mean $\\Delta$ (pp)"
     out = ["\\begin{tabular}{@{}llrrrr@{}}", "\\toprule",
-           "Data / $\\phi$ & vs. & " + ("mean ratio (baseline/EcoFed)" if ratio else "mean $\\Delta$ (pp)") + " & 95\\% CI & $n$ & Holm $p$\\\\", "\\midrule"]
-    last = None
-    for (ds, phi, b, res), pa in zip(rows, adj):
-        key = (ds, phi)
-        if key != last and last is not None:
+           "Data / $\\phi$ & vs. & " + head + " & 95\\% CI & $n$ & Holm $p$\\\\", "\\midrule"]
+    for bi, (ds, phi, rows, adj) in enumerate(blocks):
+        if bi:
             out.append("\\midrule")
-        lead = f"{ds}, {phi}" if key != last else ""
-        last = key
-        star = "$^{*}$" if pa < 0.05 else ""
-        ci = "--" if np.isnan(res["lo"]) else f"[{res['lo']:.2f}, {res['hi']:.2f}]"
-        out.append(f"{lead} & {b} & {res['diff']:.2f}{star} & {ci} & {res['n']} & {pa:.3f}\\\\")
+        for ri, ((b, res), pa) in enumerate(zip(rows, adj)):
+            lead = f"{ds}, {phi}" if ri == 0 else ""
+            star = "$^{*}$" if pa < 0.05 else ""
+            ci = "--" if np.isnan(res["lo"]) else f"[{res['lo']:.2f}, {res['hi']:.2f}]"
+            out.append(f"{lead} & {b} & {res['diff']:.2f}{star} & {ci} & {res['n']} & {pa:.3f}\\\\")
     out += ["\\bottomrule", "\\end{tabular}"]
     (TAB / fname).write_text("\n".join(out))
 
@@ -215,15 +222,17 @@ def table_ablation(df):
 
 
 if __name__ == "__main__":
-    df = AG.per_run_table("main")
+    df = AG.per_run_table("m2")
     df = AG.add_eta(df)
     df.drop(columns=["_res"]).to_csv("results/main_runs.csv", index=False)
     json.dump(df.attrs["ref_plateau"], open("results/ref_plateau.json", "w"))
     fig_curves(df); fig_eta(df)
-    fig_dots(df, "jain", "fig8a_jain", "Jain index of energy / capacity")
+    fig_dots(df, "depleted", "fig8_depleted", "clients with depleted battery (%)", pct=True)
     table_main(df)
     paired_table(df, "acc25", "paired_acc25.tex")
     paired_table(df, "acc100", "paired_acc100.tex")
+    paired_table(df, "ckpt_acc", "paired_ckpt.tex")
+    paired_table(df, "total_E", "paired_energy.tex", ratio=True)
     paired_table(df, "eta90", "paired_eta90.tex", ratio=True)
     table_ablation(df)
     print("results built:", len(df), "runs")

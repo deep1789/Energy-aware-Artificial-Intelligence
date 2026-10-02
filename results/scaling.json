@@ -1,0 +1,50 @@
+[
+ {
+  "N": 100,
+  "method": "ecofed",
+  "seconds": 0.0031514790025539696,
+  "picked": 5
+ },
+ {
+  "N": 100,
+  "method": "oort",
+  "seconds": 0.00031620699883205816,
+  "picked": 5
+ },
+ {
+  "N": 1000,
+  "method": "ecofed",
+  "seconds": 0.036136740000074496,
+  "picked": 50
+ },
+ {
+  "N": 1000,
+  "method": "oort",
+  "seconds": 0.0025498479990346823,
+  "picked": 50
+ },
+ {
+  "N": 10000,
+  "method": "ecofed",
+  "seconds": 0.2606625980006356,
+  "picked": 500
+ },
+ {
+  "N": 10000,
+  "method": "oort",
+  "seconds": 0.03197143799843616,
+  "picked": 500
+ },
+ {
+  "N": 100000,
+  "method": "ecofed",
+  "seconds": 2.6503328170001623,
+  "picked": 5000
+ },
+ {
+  "N": 100000,
+  "method": "oort",
+  "seconds": 1.0274739990018134,
+  "picked": 5000
+ }
+]

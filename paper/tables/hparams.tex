@@ -1,0 +1,41 @@
+\begin{tabular}{@{}llllc@{}}
+\toprule
+Data / $\phi$ & Method & Knobs & lr & Validation AUC (\%)\\
+\midrule
+UCI HAR, 0.1 & EcoFed & V=2.0, gamma\_pow=0.5, q\_floor=0.1, rho\_min=0.3 & 0.12 & 85.9\\
+ & Oort-style & eps=0.3, xi=1.0 & 0.12 & 83.8\\
+ & Energy-greedy & eps=0.1 & 0.06 & 86.0\\
+ & Static-Depth & -- & 0.25 & 86.4\\
+ & FedAvg-Paced & -- & 0.12 & 83.4\\
+ & FedAvg-Q8 & -- & 0.06 & 83.6\\
+ & FedProx & mu=0.01 & 0.12 & 83.1\\
+ & FedAvg & -- & 0.06 & 83.2\\
+\midrule
+UCI HAR, 0.25 & EcoFed & V=2.0, gamma\_pow=0.5, q\_floor=0.3, rho\_min=0.3 & 0.25 & 89.2\\
+ & Oort-style & eps=0.1, xi=2.0 & 0.06 & 88.0\\
+ & Energy-greedy & eps=0.1 & 0.06 & 88.5\\
+ & Static-Depth & -- & 0.25 & 89.5\\
+ & FedAvg-Paced & -- & 0.12 & 86.1\\
+ & FedAvg-Q8 & -- & 0.06 & 87.0\\
+ & FedProx & mu=0.1 & 0.06 & 86.0\\
+ & FedAvg & -- & 0.06 & 86.1\\
+\midrule
+PAMAP2, 0.1 & EcoFed & V=2.0, gamma\_pow=0.5, q\_floor=0.1, rho\_min=0.6 & 0.12 & 46.2\\
+ & Oort-style & eps=0.3, xi=1.0 & 0.06 & 37.5\\
+ & Energy-greedy & eps=0.3 & 0.12 & 38.4\\
+ & Static-Depth & -- & 0.06 & 44.7\\
+ & FedAvg-Paced & -- & 0.25 & 35.5\\
+ & FedAvg-Q8 & -- & 0.06 & 36.9\\
+ & FedProx & mu=0.001 & 0.06 & 37.1\\
+ & FedAvg & -- & 0.06 & 37.3\\
+\midrule
+PAMAP2, 0.25 & EcoFed & V=2.0, gamma\_pow=0.5, q\_floor=0.1, rho\_min=0.3 & 0.25 & 57.6\\
+ & Oort-style & eps=0.1, xi=1.0 & 0.12 & 44.6\\
+ & Energy-greedy & eps=0.1 & 0.06 & 44.3\\
+ & Static-Depth & -- & 0.25 & 51.7\\
+ & FedAvg-Paced & -- & 0.25 & 45.1\\
+ & FedAvg-Q8 & -- & 0.06 & 43.4\\
+ & FedProx & mu=0.01 & 0.06 & 41.5\\
+ & FedAvg & -- & 0.06 & 41.6\\
+\bottomrule
+\end{tabular}

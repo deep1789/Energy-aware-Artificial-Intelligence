@@ -27,6 +27,18 @@ def eta_abs(res, target, smooth=3):
     return float(x[i - 1] + f * (x[i] - x[i - 1]))
 
 
+def checkpoint(res, smooth=3):
+    """Validation-selected checkpoint: the evaluation point with the highest smoothed best-exit validation accuracy.
+    Returns the test accuracy of that checkpoint and the fleet energy spent until it."""
+    log = res["log"]
+    va = np.array(log["val_acc"])
+    vbest = va.max(axis=1)
+    vs = np.array([vbest[max(0, i - smooth + 1):i + 1].mean() for i in range(len(vbest))])
+    i = int(np.argmax(vs))
+    acc = log["acc"][i][int(np.argmax(va[i]))]
+    return dict(ckpt_acc=float(acc), ckpt_E=float(log["cum_energy"][i]), ckpt_round=int(log["round"][i]))
+
+
 def per_run_table(exp="main"):
     rows = []
     for job, r in load_results(exp):
@@ -43,6 +55,7 @@ def per_run_table(exp="main"):
                    depth=np.mean(r["log"]["depth_mean"]), gradnorm=r.get("gradnorm_sq", np.nan))
         for f in FRACS:
             row[f"acc{int(f*100)}"] = acc_at_energy(r, f, "acc", "best")
+        row.update(checkpoint(r))
         row["_res"] = r
         rows.append(row)
     return pd.DataFrame(rows)

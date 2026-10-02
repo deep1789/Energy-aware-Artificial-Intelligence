@@ -1,0 +1,5 @@
+Depth-heterogeneous federated training has a coverage-dependent error floor (convergence bound)
+EcoFed jointly controls clients, depth, precision and epochs under energy queues and coverage queues
++10 to +27 points final accuracy on strongly non-IID PAMAP2 at a binding energy budget
+1.6-2.2x less fleet energy at near-equal accuracy on UCI HAR; far fewer drained devices
+Lifecycle analysis: early exits cut inference energy 2-7x; serving overtakes training within days

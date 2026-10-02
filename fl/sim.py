@@ -33,7 +33,7 @@ def stochastic_quantize(t: torch.Tensor, bits: int, gen: torch.Generator) -> tor
 
 
 def local_train(model: MultiExitCNN1D, gstate: dict, data, depth: int, tau: int, bits: int,
-                lr: float, bs: int, gen: torch.Generator, prox_mu: float = 0.0, final_only: bool = False):
+                lr: float, bs: int, gen: torch.Generator, prox_mu: float = 0.0, final_only: bool = False, scheme: str = "uniform"):
     """Train blocks/heads 1..depth for tau epochs; return (delta over those blocks, mean loss)."""
     model.load_state_dict(gstate)
     model.train()
@@ -52,7 +52,7 @@ def local_train(model: MultiExitCNN1D, gstate: dict, data, depth: int, tau: int,
                 continue
             opt.zero_grad()
             logits = model(X[idx], depth)
-            loss = F.cross_entropy(logits[-1], y[idx]) if final_only else multi_exit_loss(logits, y[idx])
+            loss = F.cross_entropy(logits[-1], y[idx]) if final_only else multi_exit_loss(logits, y[idx], scheme)
             if ep == 0:
                 first_epoch_loss += loss.item() * len(idx); cnt += len(idx)
             if gref is not None:
@@ -91,7 +91,7 @@ def predict_probs(model, gstate, X, bs=1024):
     return torch.stack([torch.cat(o) for o in outs], dim=1)     # (n, L, C)
 
 
-def full_grad_norm_sq(model, gstate, clients, max_n=4000, seed=0):
+def full_grad_norm_sq(model, gstate, clients, max_n=4000, seed=0, scheme="uniform"):
     """||grad F(w)||^2 for the sample-weighted multi-exit objective over all clients (full depth)."""
     model.load_state_dict(gstate)
     model.train()
@@ -102,7 +102,7 @@ def full_grad_norm_sq(model, gstate, clients, max_n=4000, seed=0):
         Xs, ys = Xs[idx], ys[idx]
     model.zero_grad()
     for i in range(0, len(ys), 512):
-        loss = multi_exit_loss(model(Xs[i:i + 512]), ys[i:i + 512]) * (len(ys[i:i + 512]) / len(ys))
+        loss = multi_exit_loss(model(Xs[i:i + 512]), ys[i:i + 512], scheme) * (len(ys[i:i + 512]) / len(ys))
         loss.backward()
     return float(sum((p.grad ** 2).sum() for p in model.parameters() if p.grad is not None))
 
@@ -152,6 +152,8 @@ class RunCfg:
     dense_until: int = 24      # evaluate every round early on, when energy is spent fastest
     tau_max: int = 2
     radio_scale: float = 1.0
+    overhead_macs: float = 0.0   # unmodelled per-sample overhead (MAC-equivalents) added to the TRUE training energy
+    exit_weighting: str = "quad"       # lambda_j proportional to j^2 (deeper exits weigh more)
     energy_err: float = 0.0     # sigma of lognormal error between true and nominal device constants
     seed: int = 0
 
@@ -182,11 +184,12 @@ def run_fl(task: Task, strategy, cfg: RunCfg, record_final: bool = True):
         round_e = 0.0
         for cid, (d, bits, tau) in picks:
             e = em.e_round(true_dev[cid], d, bits, tau, fleet.n[cid], cfg.radio_scale)   # true (measured) energy
+            e += cfg.overhead_macs * true_dev[cid].alpha * tau * fleet.n[cid]
             if fleet.battery[cid] - e < 0:
                 continue                                           # infeasible: client drops
             delta, loss = local_train(model, gstate, task.clients[cid], d, tau, bits, cfg.lr,
                                       cfg.bs, gen, getattr(strategy, "prox_mu", 0.0),
-                                      getattr(strategy, "final_only", False))
+                                      getattr(strategy, "final_only", False), cfg.exit_weighting)
             fleet.battery[cid] -= e; fleet.cum_e[cid] += e; round_e += e
             fleet.last_loss[cid] = loss
             updates.append((fleet.n[cid], d, delta))
@@ -218,5 +221,5 @@ def run_fl(task: Task, strategy, cfg: RunCfg, record_final: bool = True):
     if record_final:
         out["val_probs"] = predict_probs(model, gstate, task.val[0]).numpy().astype(np.float16)
         out["test_probs"] = predict_probs(model, gstate, task.test[0]).numpy().astype(np.float16)
-        out["gradnorm_sq"] = full_grad_norm_sq(model, gstate, task.clients, seed=cfg.seed)
+        out["gradnorm_sq"] = full_grad_norm_sq(model, gstate, task.clients, seed=cfg.seed, scheme=cfg.exit_weighting)
     return out

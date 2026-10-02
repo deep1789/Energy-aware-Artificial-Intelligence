@@ -3,10 +3,10 @@
 \subsection{Why depth control needs a coverage constraint}\label{sec:theory}
 Letting weak clients train only the first blocks saves energy, but it changes what the server optimises. If deep blocks are rarely trained the aggregated update is a \emph{biased} estimate of $\nabla F$. We quantify this bias and show that it produces an error floor that does not vanish with more rounds, and that the floor is controlled by the probability $\sigma_j$ that a selected client trains block $j$.
 
-\paragraph{Setting.}
+\paragraph{Setting}
 Round $t$ selects a random set $\mathcal S_t$ and a random depth $d_k^t$ for each selected client, with a distribution that does not depend on the current iterate. Let $\sigma_{k,j}=\Pr[d_k^t\ge j\mid k\in\mathcal S_t]$ and $\sigma_j=\min_k\sigma_{k,j}$. Each selected client runs $\tau$ local SGD steps with step size $\eta$ on $F_k^{(d_k)}$ and uploads the quantised model difference of its blocks. To isolate the effect of depth, the analysed aggregator weights the contribution of client $k$ to block $l$ by $p_k/\pi_{k,l}$ with $\pi_{k,l}=\Pr[k\in\mathcal S_t,\,d_k^t\ge l]$ (a Horvitz--Thompson weighting, so that the aggregate is unbiased within the covered set). The implementation uses the usual sample-size-normalised block averages; Section~\ref{sec:coverage-exp} tests the consequence of the theory for that practical aggregator.
 
-\paragraph{Assumptions.}
+\paragraph{Assumptions}
 (A1) Every $f_k^{j}$ is $L_s$-smooth, hence $F$ is $L_s$-smooth and bounded below by $F^\star$.
 (A2) Stochastic gradients are unbiased and bounded, $\|\tilde\nabla\|\le G$ almost surely, and $\|\nabla_l f_k^{j}(\mathbf w)\|\le G_l$ for all $k,j,\mathbf w$.
 (A3) The stochastic quantiser is unbiased with $\mathbb E\|Q(x)-x\|^2\le\omega_b\|x\|^2$, $\omega_b=O(2^{-2b})$.
@@ -23,7 +23,7 @@ With $\tilde\sigma^2=\sigma_h^2+G^2/4$ and $\gamma=\min\{1/(4L_s),\sqrt{\Delta/(
 \end{equation}
 \end{theorem}
 
-The first group of terms is the usual non-convex rate. The second is a floor: it is zero if and only if $\sigma_j=1$ for every $j\ge2$ (every selected client trains every block) and it grows quadratically in the missing coverage $1-\sigma_j$, weighted by the exit weights of the exits that are being skipped. The proof is in Appendix~\ref{app:proof}.
+The first group of terms is the usual non-convex rate. The second is a floor: it is zero if and only if $\sigma_j=1$ for every $j\ge2$ (every selected client trains every block) and it grows quadratically in the missing coverage $1-\sigma_j$, weighted by the exit weights of the exits that are being skipped. The proof is in \ref{app:proof}.
 
 \begin{corollary}[Required coverage]\label{cor:cov}
 For $L$ exits with equal weights $\lambda_j=1/L$, $G_l\equiv G$ and $\sigma_j\equiv\sigma$ for $j\ge2$, the floor equals $6B^2=\frac{(L-1)(2L-1)}{L}\,G^2(1-\sigma)^2$. Hence a gradient-norm target $\epsilon$ is reachable only if
@@ -44,14 +44,14 @@ Z_j^{t+1}&=\max\{Z_j^{t}+\rho^{\min}_j-\hat\rho_j^{t},\;0\},\qquad \hat\rho_j^{t
 \end{align}
 Stability of $q_k$ implies that the time-average energy of client $k$ is at most $\bar E_k$; stability of $Z_j$ implies that the realised coverage of block $j$ is at least $\rho_j^{\min}$. The energy used in \eqref{eq:qE} is the energy \emph{reported by the device}, so the queues self-correct when the assumed device constants are wrong.
 
-\paragraph{Utility.}
+\paragraph{Utility}
 Let $u_k=n_k\sqrt{\frac1{n_k}\sum_i\ell_i^2}$ be the statistical utility of client $k$ \citep{lai2021oort}, estimated from its last reported training loss (an optimistic constant for clients not yet seen), and $\tilde u_k=u_k/\bar u$ its value relative to the fleet mean. The utility of running configuration $c=(d,b,\tau)$ is
 \begin{equation}\label{eq:utility}
 U_k(c)=\tilde u_k\Big(\frac dL\Big)^{\kappa_d}\Big(1-\frac1{2^{b}-1}\Big)\sqrt{\frac{\tau}{\tau_{\max}}} ,
 \end{equation}
 which increases with depth, precision and epochs with diminishing returns; $\kappa_d\in\{1,\tfrac12\}$ is a tuned exponent ($\kappa_d<1$ values shallow updates more).
 
-\paragraph{Per-round decision.}
+\paragraph{Per-round decision}
 With a shadow price $\lambda\ge0$ on energy (a constant added to every client's queue) each client scores its feasible configurations by
 \begin{equation}\label{eq:score}
 s_k(c)=V\,U_k(c)\;-\;(q_k+\lambda)\,\frac{e_k(c)}{\bar E_k}\;+\;\frac1m\sum_{j=1}^{d}Z_j ,
@@ -81,5 +81,5 @@ $\limsup_T\frac1T\sum_t\mathbb E\,[q_k^t+\sum_jZ_j^t]\le\frac{C_0+V(\bar U-U'^\s
 \end{proposition}
 \noindent This is the standard drift-plus-penalty trade-off \citep{neely2010stochastic}: larger $V$ approaches the optimal utility at the price of larger queues, i.e. larger transient budget violations. The proposition covers the idealised system only (the practical controller has unequal client sizes, a coverage reward linearised as $1/m$, a hard battery, and a utility that depends on stale loss statistics); we therefore evaluate the constraints empirically in Section~\ref{sec:results}. We also note that the shadow price $\lambda$ is not part of the stability argument---it only changes the utility to $U'$---and is tuned on validation data like $V$.
 
-\paragraph{Aggregation and quantisation in the implementation.}
+\paragraph{Aggregation and quantisation in the implementation}
 Block $l$ of the new global model is $\mathbf w_l^{t+1}=\mathbf w_l^t+\sum_{k:\,d_k\ge l}n_k\Delta_{k,l}/\sum_{k:\,d_k\ge l}n_k$, where $\Delta_{k,l}$ is the (possibly quantised) update. Quantisation is per-tensor stochastic uniform rounding to $2^b$ levels, which is unbiased. Blocks that no selected client trained keep their value.

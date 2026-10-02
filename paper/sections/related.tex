@@ -1,24 +1,25 @@
 \section{Related work}\label{sec:related}
 
-\paragraph{Energy and carbon of machine learning.}
+\paragraph{Energy and carbon of machine learning}
 The energy cost of training large models and its carbon consequences have been documented for natural-language models \citep{strubell2019energy,patterson2021carbon} and, more broadly, across the lifecycle of AI systems \citep{wu2022sustainable}. Reporting practices and tooling have followed \citep{henderson2020towards,you2023zeus}. Federated learning is not exempt: a first carbon-footprint study of federated training found that it can be comparable to, and for some settings larger than, centralised training once communication and the many low-efficiency devices are accounted for \citep{qiu2023first}. Our work targets the edge end of this spectrum, where the binding constraint is not a data-centre power bill but the battery of each device, and where the energy of \emph{later inference} is a first-order part of the lifecycle.
 
-\paragraph{Efficient models for edge devices.}
+\paragraph{Efficient models for edge devices}
 TinyML research reduces the cost of inference through compact architectures, quantisation and pruning \citep{lin2020mcunet}, and benchmark suites such as MLPerf Tiny treat energy per inference as a primary metric next to accuracy and latency \citep{banbury2021mlperf}. Early-exit networks go one step further by making the cost of an inference depend on the input: easy samples leave at a shallow classifier and only hard samples reach the full network \citep{teerapittayanon2016branchynet,kaya2019shallow,scardapane2020should}. Wearable activity recognition is a canonical application, because the signal is a continuous low-rate stream in which most windows are easy \citep{hammerla2016deep,ordonez2016deep}. These works optimise a model that is trained once in a data centre. We instead ask how a \emph{multi-exit} model should be trained across a fleet of battery-limited devices, and what that training costs in energy relative to the inference savings it buys.
 
-\paragraph{Federated learning under resource constraints.}
+\paragraph{Federated learning under resource constraints}
 Federated averaging \citep{mcmahan2017communication} and its variants for heterogeneous data \citep{li2020fedprox,karimireddy2020scaffold,reddi2021adaptive} are the baseline; convergence has been studied under non-IID data and partial participation \citep{li2020convergence}. Communication has been attacked with quantisation and sparsification \citep{konecny2016federated,alistarh2017qsgd}. Resource-aware client selection chooses participants by statistical utility and speed \citep{lai2021oort}, by loss \citep{cho2020client}, or with system-level constraints in mind \citep{bonawitz2019towards}. A line of work models the energy of federated learning over wireless networks and optimises resource allocation, transmit power and CPU frequency \citep{tran2019federated,yang2021energy}. These studies fix the model each client trains; they choose \emph{who} participates, \emph{how long} or \emph{how fast}. EcoFed also chooses \emph{how much of the model} a client trains, together with precision and epochs, from a single energy price.
 
-\paragraph{Heterogeneous-capacity federated learning.}
+\paragraph{Heterogeneous-capacity federated learning}
 HeteroFL, DepthFL and ScaleFL let clients with different capabilities train sub-networks of different width or depth and aggregate them on the server \citep{diao2021heterofl,kim2023depthfl,ilhan2023scalefl}. The sub-network of a client is typically \emph{fixed} by a capability class and there is no notion of a battery that is spent over time. Two gaps follow. First, when a client's capacity changes with its remaining energy the assignment must be dynamic and must respect a long-term budget. Second, the effect of depth heterogeneity on convergence is usually argued empirically; we give a bound in which skipped exits create a bias floor and show how it can be controlled (Section~\ref{sec:theory}). The static-depth baseline in our experiments follows the capability-class assignment used by this family.
 
-\paragraph{Positioning.}
+\paragraph{Positioning}
 Table~\ref{tab:positioning} summarises the differences. To our knowledge no previous work combines (i) a battery-constrained fleet with long-term energy queues, (ii) joint dynamic control of selection, depth, precision and epochs, (iii) a convergence bound that exposes the coverage floor and turns it into a constraint, and (iv) a lifecycle accounting that includes the inference energy of the trained multi-exit model. We state this as a claim about the works we are aware of rather than a certainty, since the literature on energy-aware federated learning is large and moving fast.
 
 \begin{table}[t]
 \centering\small
 \caption{Positioning relative to representative prior work. $\checkmark$: addressed; $\circ$: partially; --: not addressed.}\label{tab:positioning}
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lccccc@{}}
 \toprule
  & Energy/battery & Selection & Depth & Convergence with & Inference\\
@@ -31,5 +32,5 @@ HeteroFL/DepthFL/ScaleFL \citep{diao2021heterofl,kim2023depthfl,ilhan2023scalefl
 Early-exit networks \citep{teerapittayanon2016branchynet,kaya2019shallow} & -- & -- & -- & -- & $\checkmark$\\
 \textbf{EcoFed (this paper)} & $\checkmark$ & $\checkmark$ & $\checkmark$ (dynamic) & $\checkmark$ & $\checkmark$\\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
